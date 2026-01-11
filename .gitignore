@@ -1,9 +1,1 @@
-Interface/static/Data/snapshot_train.zip
 Interface/static/Data/snapshot_train/*
-Interface/static/Data/data_test_converted.pkl
-Interface/static/Data/data_train_converted.pkl
-Interface/static/Data/data_train_eNum.pkl
-Interface/static/Data/rNum_train.npy
-Interface/retrieval/centroids_train.npy
-Interface/retrieval/clusters_train.npy
-Interface/retrieval/tf_train.npy
