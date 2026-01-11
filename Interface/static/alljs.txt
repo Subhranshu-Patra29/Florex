@@ -1,0 +1,4079 @@
+btnEvent.js
+
+
+window.onload = function () {
+    let cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++) {
+        let cookie = cookies[i];
+        let eqPos = cookie.indexOf("=");
+        let name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+    }
+    var IMAGE_PATH = "../static/images/";
+    document.cookie = "RoomIndex=0";
+    //初始化数
+    var BedNum = 0, MasterNum = 0, SecondNum = 0, GuestNum = 0, StudyNum = 0, ChildNum = 0, LivingNum = 0;
+    var KitchenNum = 0, BalconyNum = 0, BathNum = 0, DiningNum = 0, StorageNum = 0, EntranceNum = 0, Wall_inNum = 0;
+    // document.getElementById("BedRoom").onclick = function () {
+    //     var curInd = changeRoomIndexCookie();
+    //     ++BedNum;
+    //     document.getElementById("BedRoom_val").innerHTML = BedNum;
+    //     newElement("BedRoom", BedNum, curInd);
+    // }
+    // document.getElementById("MasterRoom").onclick = function () {
+    //     var curInd = changeRoomIndexCookie();
+    //     ++MasterNum;
+    //     ++BedNum;
+    //     newElement("MasterRoom", MasterNum, curInd);
+    //     document.getElementById("MasterRoom_val").innerHTML = MasterNum;
+    //     document.getElementById("BedRoom_val").innerHTML = BedNum;
+    // }
+    // document.getElementById("SecondRoom").onclick = function () {
+    //     var curInd = changeRoomIndexCookie();
+    //     ++SecondNum;
+    //     ++BedNum;
+    //     newElement("SecondRoom", SecondNum, curInd);
+    //     document.getElementById("SecondRoom_val").innerHTML = SecondNum;
+    //     document.getElementById("BedRoom_val").innerHTML = BedNum;
+    // }
+    // document.getElementById("GuestRoom").onclick = function () {
+    //     var curInd = changeRoomIndexCookie();
+    //     ++GuestNum;
+    //     ++BedNum;
+    //     newElement("GuestRoom", GuestNum, curInd);
+    //     document.getElementById("GuestRoom_val").innerHTML = GuestNum;
+    //     document.getElementById("BedRoom_val").innerHTML = BedNum;
+    // }
+    // document.getElementById("StudyRoom").onclick = function () {
+    //     var curInd = changeRoomIndexCookie();
+    //     ++StudyNum;
+    //     ++BedNum;
+    //     newElement("StudyRoom", StudyNum, curInd);
+    //     document.getElementById("StudyRoom_val").innerHTML = StudyNum;
+    //     document.getElementById("BedRoom_val").innerHTML = BedNum;
+    // }
+    // document.getElementById("ChildRoom").onclick = function () {
+    //     var curInd = changeRoomIndexCookie();
+    //     ++ChildNum;
+    //     ++BedNum;
+    //     newElement("ChildRoom", ChildNum, curInd);
+    //     document.getElementById("ChildRoom_val").innerHTML = ChildNum;
+    //     document.getElementById("BedRoom_val").innerHTML = BedNum;
+    // }
+    // document.getElementById("LivingRoom").onclick = function () {
+    //     var curInd = changeRoomIndexCookie();
+    //     ++LivingNum;
+    //     newElement("LivingRoom", LivingNum, curInd);
+    //     document.getElementById("LivingRoom_val").innerHTML = LivingNum;
+    // }
+    // document.getElementById("Kitchen").onclick = function () {
+    //     var curInd = changeRoomIndexCookie();
+    //     ++KitchenNum;
+    //     newElement("Kitchen", KitchenNum, curInd);
+    //     document.getElementById("Kitchen_val").innerHTML = KitchenNum;
+    // }
+    // document.getElementById("Balcony").onclick = function () {
+    //     var curInd = changeRoomIndexCookie();
+    //     ++BalconyNum;
+    //     newElement("Balcony", BalconyNum, curInd);
+    //     document.getElementById("Balcony_val").innerHTML = BalconyNum;
+    // }
+    // document.getElementById("BathRoom").onclick = function () {
+    //     var curInd = changeRoomIndexCookie();
+    //     ++BathNum;
+    //     newElement("BathRoom", BathNum, curInd);
+    //     document.getElementById("BathRoom_val").innerHTML = BathNum;
+    // }
+    // document.getElementById("DiningRoom").onclick = function () {
+    //     var curInd = changeRoomIndexCookie();
+    //     ++DiningNum;
+    //     newElement("DiningRoom", DiningNum, curInd);
+    //     document.getElementById("DiningRoom_val").innerHTML = DiningNum;
+    // }
+    // document.getElementById("Storage").onclick = function () {
+    //     var curInd = changeRoomIndexCookie();
+    //     ++StorageNum;
+    //     newElement("Storage", StorageNum, curInd);
+    //     document.getElementById("Storage_val").innerHTML = StorageNum;
+    // }
+    // document.getElementById("Entrance").onclick = function () {
+    //     var curInd = changeRoomIndexCookie();
+    //     ++EntranceNum;
+    //     newElement("Entrance", EntranceNum, curInd);
+    //     document.getElementById("Entrance_val").innerHTML = EntranceNum;
+    // }
+    // document.getElementById("Wallin").onclick = function () {
+    //     var curInd = changeRoomIndexCookie();
+    //     ++Wall_inNum;
+    //     newElement("Wallin", Wall_inNum, curInd);
+    //     document.getElementById("Wallin_val").innerHTML = Wall_inNum;
+    // }
+
+    var animationDiv = document.getElementById('animationDiv');
+    var addButton = document.getElementById('add');
+    var removeSVG = '<?xml version="1.0" encoding="utf-8"?><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 22 22" style="enable-background:new 0 0 22 22;" xml:space="preserve"><g><g><path class="fill" d="M16.1,3.6h-1.9V3.3c0-1.3-1-2.3-2.3-2.3h-1.7C8.9,1,7.8,2,7.8,3.3v0.2H5.9c-1.3,0-2.3,1-2.3,2.3v1.3c0,0.5,0.4,0.9,0.9,1v10.5c0,1.3,1,2.3,2.3,2.3h8.5c1.3,0,2.3-1,2.3-2.3V8.2c0.5-0.1,0.9-0.5,0.9-1V5.9C18.4,4.6,17.4,3.6,16.1,3.6z M9.1,3.3c0-0.6,0.5-1.1,1.1-1.1h1.7c0.6,0,1.1,0.5,1.1,1.1v0.2H9.1V3.3z M16.3,18.7c0,0.6-0.5,1.1-1.1,1.1H6.7c-0.6,0-1.1-0.5-1.1-1.1V8.2h10.6L16.3,18.7L16.3,18.7z M17.2,7H4.8V5.9c0-0.6,0.5-1.1,1.1-1.1h10.2c0.6,0,1.1,0.5,1.1,1.1V7z"/></g><g><g><path class="fill" d="M11,18c-0.4,0-0.6-0.3-0.6-0.6v-6.8c0-0.4,0.3-0.6,0.6-0.6s0.6,0.3,0.6,0.6v6.8C11.6,17.7,11.4,18,11,18z"/></g><g><path class="fill" d="M8,18c-0.4,0-0.6-0.3-0.6-0.6v-6.8C7.4,10.2,7.7,10,8,10c0.4,0,0.6,0.3,0.6,0.6v6.8C8.7,17.7,8.4,18,8,18z"/></g><g><path class="fill" d="M14,18c-0.4,0-0.6-0.3-0.6-0.6v-6.8c0-0.4,0.3-0.6,0.6-0.6c0.4,0,0.6,0.3,0.6,0.6v6.8C14.6,17.7,14.3,18,14,18z"/></g></g></g></svg>';
+    var checkSVG = ' <?xml version="1.0" encoding="utf-8"?><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 22 22" style="enable-background:new 0 0 22 22;" xml:space="preserve"><circle  cx=11 cy=11 class="noFill" stroke="rgb(47, 167, 77)" r="10" width="23" height="23"/><g><path class="fill" d="M9.7,14.4L9.7,14.4c-0.2,0-0.4-0.1-0.5-0.2l-2.7-2.7c-0.3-0.3-0.3-0.8,0-1.1s0.8-0.3,1.1,0l2.1,2.1l4.8-4.8c0.3-0.3,0.8-0.3,1.1,0s0.3,0.8,0,1.1l-5.3,5.3C10.1,14.3,9.9,14.4,9.7,14.4z"/></g></svg>';
+
+
+    completedList = document.getElementById('completed');
+    todoList = document.getElementById('todo');
+
+
+// Core Functions
+
+    function addItem(roomname) {
+        if (itemTextBox.value) {
+            newElement(itemTextBox.value);
+            itemTextBox.value = "";
+        }
+
+        document.getElementById('add').classList.toggle("rotate");
+        addAnimation();
+
+    }
+
+
+    function fade(element) {
+        element.classList.remove('invisible');
+
+    }
+
+
+    function checkItem() {
+        checkButton = this;
+        checkAnimateDiv = this.children[1];
+        console.log(checkAnimateDiv);
+        checkElement = this.parentElement.parentElement;
+
+
+        if (!(checkElement.classList.contains('checked'))) {
+            selectRoomType(checkElement.innerText, this.id);
+            checkElement.classList.add('checked');
+            checkAnimation(checkAnimateDiv);
+
+            //checkElement.classList.add('invisible');
+
+            setTimeout(function () {
+                completedList.appendChild(checkElement);
+
+            }, 100);
+
+            setTimeout(function () {
+                DOMCleaner(checkAnimateDiv);
+
+            }, 500);
+        } else {
+            checkElement.classList.remove('checked');
+            deleteAnimation(checkElement);
+            todoList.insertBefore(checkElement, todoList.firstChild);
+
+            var points = d3.select("body").selectAll("circle");
+
+            var curInd = this.id.split("_")[1];
+
+            points.each(function (d, i) {
+                var tmpInd = this.id.split("_")[1];
+                if (tmpInd == curInd) {
+                    d3.select(this).remove();
+                }
+            });
+        }
+
+
+    }
+
+
+    function DOMCleaner(item) {
+        while (item.firstChild) {
+            //item.removeChild(item.firstChild);
+            item.firstChild.remove();
+        }
+    }
+
+    function removeItem(name, deleteButton) {
+        deleteElement = deleteButton.parentElement.parentElement;
+        deleteElement.classList.add('deleted');
+        deleteAnimation(deleteElement);
+        switch (name) {
+            case "BedRoom":
+                var a = --BedNum;
+                break;
+            case "MasterRoom":
+                var a = --MasterNum;
+                --BedNum;
+                break;
+            case "SecondRoom":
+                var a = --SecondNum;
+                --BedNum;
+                break;
+            case "GuestRoom":
+                var a = --GuestNum;
+                --BedNum;
+                break;
+            case "StudyRoom":
+                var a = --StudyNum;
+                --BedNum;
+                break;
+            case "ChildRoom":
+                var a = --ChildNum;
+                --BedNum;
+                break;
+            case "Kitchen":
+                var a = --KitchenNum;
+                break;
+            case "DiningRoom":
+                var a = --DiningNum;
+                break;
+            case "BathRoom":
+                var a = --BathNum;
+                break;
+            case "Balcony":
+                var a = --BalconyNum;
+                break;
+            case "Entrance":
+                var a = --EntranceNum;
+                break;
+            case "Wallin":
+                var a = --Wall_inNum;
+                break;
+            case "Storage":
+                var a = --StorageNum;
+                break;
+            case "LivingRoom":
+                var a = --LivingNum;
+                break;
+
+            default:
+                break
+        }
+        var id = name + "_val";
+        document.getElementById(id).innerHTML = a;
+        document.getElementById("BedRoom_val").innerHTML = BedNum;
+
+        setTimeout(function () {
+            deleteElement.remove();
+        }, 500);
+
+
+    }
+
+
+    function newElement(name, value, curInd) {
+
+        var item_image = document.createElement('img');
+        item_image.src = IMAGE_PATH + name + ".png";
+        item_image.classList.add('showrmitem');
+
+        var item = document.createElement('li');
+
+        item.innerHTML = name;
+        item.appendChild(item_image);
+        item.classList.add('invisible');
+
+
+        var buttonsDiv = document.createElement('div');
+        buttonsDiv.classList.add('buttons');
+
+        var deleteButton = document.createElement('button');
+        deleteButton.classList.add('deleteButton');
+        deleteButton.id = "Delete_" + curInd;
+        deleteButton.innerHTML = removeSVG;
+        deleteButton.onclick = function () {
+            if (d3.select("body").selectAll("circle").length > 0) {
+                var points = d3.select("body").selectAll("circle");
+                var curInd = this.id.split("_")[1];
+
+                points.each(function (d, i) {
+                    var tmpInd = this.id.split("_")[1];
+                    if (tmpInd == curInd) {
+                        d3.select(this).remove();
+                    }
+                });
+            }
+
+
+            removeItem(name, deleteButton);
+        }
+
+
+        var checkButton = document.createElement('button');
+        checkButton.classList.add('checkButton');
+        checkButton.innerHTML = checkSVG;
+        checkButton.id = "Check_" + curInd;
+
+        var checkAnimateDiv = document.createElement('div');
+        checkAnimateDiv.id = "checkAnimateDiv";
+        checkButton.appendChild(checkAnimateDiv);
+
+        checkButton.addEventListener('click', checkItem);
+
+        buttonsDiv.appendChild(deleteButton);
+        buttonsDiv.appendChild(checkButton);
+
+        item.appendChild(buttonsDiv);
+
+
+        //todoList.prepend(item);
+        todoList.insertBefore(item, todoList.firstChild);
+        setTimeout(function () {
+            fade(item);
+        }, 100);
+
+
+    }
+
+
+// Visual
+
+
+    /* Add Button Animation */
+    function addAnimation() {
+        const Burst1 = new mojs.Burst({
+            parent: animationDiv,
+            top: '50%',
+            left: '50%',
+            radius: {0: 80},
+            count: 8,
+            children: {
+                shape: 'circle',
+                fill: {'red': 'blue'},
+                strokeWidth: 1,
+                duration: 600,
+                stroke: {'red': 'blue'}
+            }
+        });
+
+
+        const Burst2 = new mojs.Burst({
+            parent: animationDiv,
+            top: '50%',
+            left: '50%',
+            radius: {0: 100},
+            count: 4,
+            children: {
+                shape: 'rect',
+                fill: 'white',
+                strokeWidth: 1,
+                duration: 300,
+                stroke: 'white'
+            }
+        });
+
+
+        const circle1 = new mojs.Shape({
+            radius: {0: 40},
+            parent: animationDiv,
+            fill: 'none',
+            stroke: 'white',
+            strokeWidth: 15,
+            duration: 300,
+            opacity: {1: 0}
+        });
+
+        const circle2 = new mojs.Shape({
+            radius: {0: 50},
+            parent: animationDiv,
+            fill: 'none',
+            stroke: 'red',
+            strokeWidth: 5,
+            duration: 400,
+            opacity: {1: 0}
+        });
+
+
+        const circle3 = new mojs.Shape({
+            radius: {0: 60},
+            parent: animationDiv,
+            fill: 'none',
+            stroke: 'blue',
+            strokeWidth: 5,
+            duration: 500,
+            opacity: {1: 0}
+        });
+
+        const circle4 = new mojs.Shape({
+            radius: {0: 70},
+            parent: animationDiv,
+            fill: 'white',
+
+            stroke: 'white',
+            strokeWidth: 5,
+            duration: 600,
+            opacity: {1: 0}
+        });
+
+        const timeline = new mojs.Timeline({
+
+            repeat: 0
+        }).add(circle4, circle1, circle2, circle3, Burst1, Burst2);
+
+        timeline.play();
+    }
+
+    /* Delete item animation */
+
+    function checkAnimation(checkItem) {
+        const circle1 = new mojs.Shape({
+            radius: {0: 1000},
+            parent: checkItem,
+            fill: '#7bef28',
+            stroke: 'white',
+            strokeWidth: 10,
+            duration: 500,
+            opacity: {1: 0}
+        });
+
+        const circle2 = new mojs.Shape({
+            radius: {0: 200},
+            parent: checkItem,
+            fill: 'none',
+            stroke: 'white',
+            strokeWidth: 30,
+            duration: 300,
+            opacity: {1.7: 0}
+        });
+
+        const circle3 = new mojs.Shape({
+            radius: {0: 400},
+            parent: checkItem,
+            fill: 'none',
+            stroke: '#230e5780',
+            strokeWidth: 10,
+            duration: 400,
+            opacity: {1: 0}
+
+        });
+
+
+        const timelineX = new mojs.Timeline({
+            repeat: 0,
+
+        }).add(circle1, circle2, circle3);
+
+        timelineX.play();
+
+
+    }
+
+
+
+
+    function changeRoomIndexCookie() {
+        var arr, reg = new RegExp("(^| )RoomIndex=([^;]*)(;|$)");
+
+        var curIndex = -1;
+        if (arr = document.cookie.match(reg))
+            curIndex = arr[2];
+
+        document.cookie = "RoomIndex=" + (parseInt(curIndex) + 1);
+
+        return curIndex;
+    }
+}
+
+
+
+buttonEvent.js
+
+var focus_circle = false;
+var focus_line = false;
+var focus_rect = "";
+var rect_type = false;
+var Type = "";
+var adjust_graph = false;
+var createNewLine = false;
+var isTrans = 0;
+var islLoadTest = 0;
+var selectRect;
+var startRectvalue = [-1, -1, -1, -1];
+var startPoint = [-1, -1, -1, -1, -1];
+var RelRectvalue = [];
+$(document).ready(function () {
+    start();//执行函数
+    isTrans = 0;
+
+});
+
+function show(isShow) {
+    // document.getElementById("rmlist").style.opacity = isShow;
+    // document.getElementById("gooey-API").style.opacity = isShow;
+    document.getElementById("leftbox").style.opacity = isShow;
+    document.getElementById("rightbox").style.opacity = isShow;
+    document.getElementById("listbox").style.opacity = isShow;
+    document.getElementById("graphSearch").style.opacity = isShow;
+    document.getElementById("Editing").style.opacity = isShow;
+
+    document.getElementById("BedRoomVue").style.opacity = isShow;
+    document.getElementById("BathRoomVue").style.opacity = isShow;
+    document.getElementById("otherVue").style.opacity = isShow;
+    document.getElementById("detailVue").style.opacity = isShow;
+    document.getElementById("addVue").style.opacity = isShow;
+
+}
+
+$(document).ready(function () {
+    show(0.0)
+    setTimeout("show(1.0)", 12000)
+    //load the start
+    demo.init();
+});
+
+function start() {
+
+    var leftsvg = document.getElementById('LeftGraphSVG');
+    leftsvg.oncontextmenu = function () {
+        return false;
+    }
+
+    $('#LeftGraphSVG').on('mousedown', function (e) {
+
+        console.log("Left!");
+
+        let selectX = e.clientX - leftsvg.getBoundingClientRect().left;
+        let selectY = e.clientY - leftsvg.getBoundingClientRect().top;
+
+        var roomSelect = -1;
+
+        var arr, reg = new RegExp("(^| )ifSelectRoom=([^;]*)(;|$)");
+        if (arr = document.cookie.match(reg)) {
+            roomSelect = arr[2];
+        } else {
+            roomSelect = 0;
+        }
+
+        if (roomSelect == 1) {
+            clearHighLight();
+
+            var curRoom = "NULL";
+            var curIndex = -1;
+
+            arr, reg = new RegExp("(^| )RoomType=([^;]*)(;|$)");
+
+            if (arr = document.cookie.match(reg)) {
+                curRoom = arr[2];
+            }
+
+            arr, reg = new RegExp("(^| )CurNum=([^;]*)(;|$)");
+
+            if (arr = document.cookie.match(reg)) {
+                curIndex = arr[2];
+            }
+            var id = "TransCircle_" + curIndex + "_" + curRoom;
+            // if (isTrans == 0) {
+            //     document.getElementById("graphSearch").style = "display:flex;cursor: default;color: #000;text-align: center;vertical-align: middle;line-height: 26px;position: absolute;margin-left: 160px;"
+            //
+            // }
+            CreateCircle(selectX / 2, selectY / 2, id);
+            d3.select("body").select("#LeftGraphSVG").select("#" + id).attr('scalesize', 1);
+            document.cookie = "ifSelectRoom=0";
+            document.cookie = "RoomNum=" + (parseInt(curIndex) + 1)
+        }
+    })
+
+    console.time('time');
+
+    var model = 1;
+    $.get("/index/Init/", {'start': model.toString()}, function () {
+        console.log("load model success");
+        console.timeEnd('time')
+
+    })
+    animateHeight(true);
+    animateHeight1(true);
+    animateHeight2(true);
+    animateHeight3(true);
+    animateHeight4(true);
+}
+
+function addLivingRoom(BtnID) {//这个加点的
+    var arr, reg = new RegExp("(^| )RoomNum=([^;]*)(;|$)");
+    var id = -1;
+    if (arr = document.cookie.match(reg))
+        id = parseInt(arr[2]);
+    console.log(BtnID);
+    var roomType = BtnID.split("_")[0];
+    if (roomType == "BedRoom") {
+        var Bedrandom = {0: "MasterRoom", 1: "SecondRoom", 2: "GuestRoom", 3: "ChildRoom", 4: "StudyRoom"};
+        var rand = Math.random() * 5;
+
+        roomType = Bedrandom[parseInt(rand)];
+    }
+
+    selectRoomType(roomType, id);
+}
+
+function clearHighLight() {
+    var points = d3.select("body").select("#LeftGraphSVG").selectAll("circle").attr("stroke-width", 2);
+}
+
+function rect_clearHighLight() {
+    var rects = d3.select("body").select("#LeftLayoutSVG").selectAll("rect").attr("stroke-width", 4);
+
+}
+
+function selectRoomType(roomType, id) {
+    document.cookie = "RoomType=" + roomType;
+    document.cookie = "ifSelectRoom=1";
+    document.cookie = "CurNum=" + id;
+    // document.cookie = "CurNum=" + id.split("_")[1];
+    var arr, reg = new RegExp("(^| )ifSelectRoom=([^;]*)(;|$)");
+    if (arr = document.cookie.match(reg))
+        console.log(arr[2]);
+}
+
+function init() {
+    d3.select('body').select('#RightSVG').selectAll('line').remove();
+    d3.select('body').select('#RightSVG').selectAll('circle').remove();
+
+    d3.select('body').select('#RightLayoutSVG').selectAll('line').remove();
+    d3.select('body').select('#RightLayoutSVG').selectAll('circle').remove();
+    d3.select('body').select('#RightLayoutSVG').selectAll('rect').remove();
+    d3.select('body').select('#RightLayoutSVG').selectAll('polygon').remove();
+    d3.select('body').select('#RightLayoutSVG').selectAll('clipPath').remove();
+
+    // d3.select('body').select('#LeftGraphSVG').selectAll('.TransLine').remove();
+    // d3.select('body').select('#LeftGraphSVG').selectAll('.TransCircle').remove();
+    document.getElementById("graphSearch").style = "cursor: default;color: #000;text-align: center;vertical-align: middle;line-height: 26px;position: absolute;margin-left: 360px;";
+
+    d3.select('body').select('#LeftLayoutSVG').selectAll('rect').remove();
+    d3.select('body').select('#LeftLayoutSVG').selectAll('polygon').remove();
+    d3.select('body').select('#LeftLayoutSVG').selectAll('clipPath').remove();
+    d3.select('body').select('#LeftLayoutSVG').selectAll('g').remove();
+
+}
+
+function RightInit() {
+    d3.select('body').select('#RightSVG').selectAll('line').remove();
+    d3.select('body').select('#RightSVG').selectAll('circle').remove();
+    d3.select('body').select('#RightLayoutSVG').selectAll('line').remove();
+    d3.select('body').select('#RightLayoutSVG').selectAll('circle').remove();
+    d3.select('body').select('#RightLayoutSVG').selectAll('rect').remove();
+    d3.select('body').select('#RightLayoutSVG').selectAll('polygon').remove();
+    d3.select('body').select('#RightLayoutSVG').selectAll('clipPath').remove();
+
+}
+
+function ListBox(ret, rooms) {
+    var roomList = ret;
+    console.log("roomList" + roomList);
+    var hsList = document.getElementById('hsList');
+    while (hsList.hasChildNodes()) {
+        hsList.removeChild(hsList.firstChild);
+    }
+    for (var i = roomList.length - 1; i >= 0; i--) {
+        var hs = roomList[i];
+        var itembt = document.createElement('button');
+        itembt.innerHTML = ret[i].split(".")[0];
+        itembt.classList.add('api-title');
+        itembt.classList.add('pngls');
+        itembt.id = "Btn_" + ret[i];
+        var itemimg = document.createElement('img');
+        // itemimg.src="../static/Data/Img/52.png";
+        //             itemimg.src="../static/Data/snapshot/"+ret[i];
+        itemimg.src = "../static/Data/snapshot_train/" + ret[i];
+        itembt.appendChild(itemimg);
+        itembt.onclick = function () {
+            RightInit();
+            var all = document.getElementsByClassName("api-text");
+            var i;
+            for (i = 0; i < all.length; i++) {
+                all[i].style.border = "0px";
+            }
+            d3.select('body').select('#LeftBaseSVG').selectAll('rect').remove();
+            var parent = this.parentNode;
+            parent.style.border = "2px solid #BEECFF";
+            // d3.select('body').select('#LeftLayoutSVG').selectAll("svg > *").remove();
+            console.time('time');
+            console.log(this.id.split("_")[1]);
+            CreateRightImage(this.id.split("_")[1]);
+            var Rightid = this.id.split("_")[1];
+            document.getElementById("transfer").onclick = function () {
+                d3.select('body').select('#LeftGraphSVG').selectAll('.TransLine').remove();
+                d3.select('body').select('#LeftGraphSVG').selectAll('.TransCircle').remove();
+                CreateLeftGraph(rooms, Rightid);
+                // d3.select("body").select("#LeftGraphSVG").select("#" + roomid).attr('scalesize',1);
+                document.getElementById("graphSearch").style = "display:none;cursor: default;color: #000;text-align: center;vertical-align: middle;line-height: 26px;position: absolute;margin-left: 160px;";
+                isTrans = 1;
+                document.getElementById("graphdiv").style = "display:block;cursor: default;color: #000;width: 90px;border: 2px solid #0072ca;border-radius: 30px;text-align: center;vertical-align: middle;line-height: 26px;height: 30px;position: absolute;margin-left: 300px;";
+                document.getElementById("layoutdiv").style = "display:block;cursor: default;color: #000;width: 90px;border: 2px solid #0072ca;border-radius: 30px;text-align: center;vertical-align: middle;line-height: 26px;height: 30px;position: absolute;margin-left: 400px;";
+            }
+            console.timeEnd('time')
+        }
+
+        var itemdiv = document.createElement('div');
+        itemdiv.classList.add('api-text');
+        itemdiv.appendChild(itembt);
+
+        var itemli = document.createElement('li');
+        itemli.classList.add('col-sm-12');
+        itemli.appendChild(itemdiv);
+        hsList.insertBefore(itemli, hsList.firstChild);
+    }
+    console.time('time');
+    // CreateRightImage(ret[0]);
+// ocument.getElementById("transfer").onclick = function () {
+//         CreateLeftGraph(rooms, ret[0]);}
+    console.timeEnd('time')
+}
+
+function NumSearch() {
+    document.getElementById("graphdiv").style = "display:none;cursor: default;color: #000;width: 90px;border: 2px solid #0072ca;border-radius: 30px;text-align: center;vertical-align: middle;line-height: 26px;height: 30px;position: absolute;margin-left: 300px;";
+    document.getElementById("layoutdiv").style = "display:none;cursor: default;color: #000;width: 90px;border: 2px solid #0072ca;border-radius: 30px;text-align: center;vertical-align: middle;line-height: 26px;height: 30px;position: absolute;margin-left: 400px;";
+
+    d3.select('body').select('#LeftGraphSVG').selectAll('.TransLine').remove();
+    d3.select('body').select('#LeftGraphSVG').selectAll('.TransCircle').remove();
+    document.cookie = "RoomNum=0";
+    init();
+    d3.select('body').select('#LeftBaseSVG').selectAll('rect').remove();
+    d3.select("body").select("#LeftLayoutSVG").selectAll(".windowsline").remove();
+    d3.select("body").selectAll(".UserPoint").attr("fill", "#6bdb6a").attr("stroke", 0);
+    var hsname = null;
+    var arr, reg = new RegExp("(^| )hsname=([^;]*)(;|$)");
+    if (arr = document.cookie.match(reg))
+        hsname = arr[2];
+
+    var points = d3.select('body').select('#LeftGraphSVG').selectAll('circle');
+
+    var rooms = [];
+    rooms.push(hsname);
+    var obj = Num();
+    rooms.push(obj.roomactarr);
+    rooms.push(obj.roomexaarr);
+    rooms.push(obj.roomnumarr);
+
+    points.each(function (d, i) {
+        var room = [];
+        room.push(this.id);
+        room.push(this.cx.animVal.value);
+        room.push(this.cy.animVal.value);
+        rooms.push(room);
+    });
+    $.get("/index/NumSearch/", {'userInfo': JSON.stringify(rooms)}, function (ret) {
+        ListBox(ret, rooms);
+    });
+}
+
+
+function roomcolor(rmcate) {
+    switch (rmcate) {
+        case "LivingRoom":
+            var color = d3.rgb(244, 242, 229)
+            break;
+        case "MasterRoom":
+            var color = d3.rgb(253, 244, 171)
+            break;
+        case "Kitchen":
+            var color = d3.rgb(234, 216, 214)
+            break;
+        case "Bathroom":
+            var color = d3.rgb(205, 233, 252);
+            break;
+        case "DiningRoom":
+            var color = d3.rgb(244, 242, 229);
+            break;
+        case "ChildRoom":
+            var color = d3.rgb(253, 244, 171);
+            break;
+        case "StudyRoom":
+            var color = d3.rgb(253, 244, 171);
+            break;
+        case "SecondRoom":
+            var color = d3.rgb(253, 244, 171);
+            break;
+        case "GuestRoom":
+            var color = d3.rgb(253, 244, 171);
+            break;
+        case "Balcony":
+            var color = d3.rgb(208, 216, 135);
+            break;
+        case "Entrance":
+            var color = d3.rgb(244, 242, 229);
+            break;
+        case "Storage":
+            var color = d3.rgb(249, 222, 189);
+            break;
+        case "Wall-in":
+            var color = d3.rgb(202, 207, 239);
+            break;
+        case "External area":
+            var color = d3.rgb(255, 255, 255);
+            break;
+        case "Exterior wall":
+            var color = d3.rgb(79, 79, 79);
+            break;
+        case"Front door":
+            var color = d3.rgb(255, 225, 25);
+            break;
+        case "Interior wall":
+            var color = d3.rgb(128, 128, 128);
+            break;
+        case"Interior door":
+            var color = d3.rgb(255, 255, 255);
+            break;
+
+
+        default:
+            break
+    }
+    return color;
+}
+
+function CreateCircle(cx, cy, id, r) {
+    if (r == undefined) {
+        r = 5;
+    }
+
+    var title = id.split("_")[2];
+    var circlecolor = roomcolor(title);
+    d3.select('body').select('#LeftGraphSVG').append('circle')
+        .attr("cx", cx)
+        .attr("cy", cy)
+        .attr("fill", circlecolor)
+        .attr("r", r)
+        .attr("stroke", "#000000")
+        .attr("stroke-width", 2)
+        .attr("id", id)
+        .attr("class", "TransCircle")
+        .on("mousedown", circle_mousedown)
+        .on("mousemove", circle_mousemove)
+        .on("mouseup", circle_mouseup)
+        .on("dblclick", circle_dblclick)
+        .append("title")//此处加入title标签
+        .text(title);
+}
+
+function CreateLine(x1, y1, x2, y2, id) {
+    d3.select('body').select('#LeftGraphSVG').append('line')
+        .attr("x1", x1)
+        .attr("y1", y1)
+        .attr("x2", x2)
+        .attr("y2", y2)
+        .attr("stroke", "#000000")
+        .attr("stroke-width", "2px")
+        .attr("id", id)
+        .attr("class", "TransLine")
+        .on("mousedown", line_mousedown)
+        .on("mouseup", line_mouseup)
+}
+
+
+function LoadTestBoundary(files) {
+    init();
+    if (islLoadTest == 1) {
+        document.getElementById("BedRoomlb").innerHTML = "BedRoom";
+        document.getElementById("BathRoomlb").innerHTML = "BathRoom";
+        document.getElementById("otherlb").innerHTML = "Other Room Types";
+        document.getElementById("detailedlb").innerHTML = "Detailed Bedroom Types";
+        document.getElementById("graphdiv").style = "display:none;cursor: default;color: #000;width: 90px;border: 2px solid #0072ca;border-radius: 30px;text-align: center;vertical-align: middle;line-height: 26px;height: 30px;position: absolute;margin-left: 300px;";
+        document.getElementById("layoutdiv").style = "display:none;cursor: default;color: #000;width: 90px;border: 2px solid #0072ca;border-radius: 30px;text-align: center;vertical-align: middle;line-height: 26px;height: 30px;position: absolute;margin-left: 400px;";
+
+        // initVue();
+    }
+    d3.select('body').select('#LeftBaseSVG').selectAll("svg > *").remove();
+    d3.select('body').select('#LeftGraphSVG').selectAll("svg > *").remove();
+    d3.select('body').select('#LeftLayoutSVG').selectAll("svg > *").remove();
+    d3.select('body').select('#RightLayoutSVG').selectAll("svg > *").remove();
+    d3.select('body').select('#RightSVG').selectAll("svg > *").remove();
+    document.getElementById('hsList').innerHTML = "";
+    d3.select('body').select('#LeftBaseSVG').selectAll('polygon').remove();
+    d3.select('body').select('#LeftBaseSVG').selectAll('line').remove();
+
+    var file = files[0];
+    console.log(file.name);
+    document.cookie = "hsname=" + file.name;
+    $.get("/index/LoadTestBoundary", {'testName': file.name}, function (ret) {
+        var border = 4;
+        islLoadTest = 1;
+        var hsex = ret['exterior'];
+        d3.select("#LeftBaseSVG")
+            .append("polygon")
+            .attr("points", hsex)
+            .attr("fill", "none")
+            .attr("stroke", roomcolor("Exterior wall"))
+            .attr("stroke-width", border);
+        var fontdoor_color = roomcolor("Front door");
+
+        var door = ret['door'].split(",");
+        d3.select('body').select('#LeftBaseSVG').append('line')
+            .attr("x1", parseInt(door[0]))
+            .attr("y1", door[1])
+            .attr("x2", door[2])
+            .attr("y2", door[3])
+            .attr("stroke", fontdoor_color)
+            .attr("stroke-width", border);
+
+    })
+    d3.select('body').select('#LeftBaseSVG').attr("transform", "scale(2)");
+    d3.select('body').select('#LeftGraphSVG').attr("transform", "scale(2)");
+
+    NumSearch();
+}
+
+function CreateLeftPlan(roombx, hsex, door, windows, indoor, windowsline, rmsize) {
+    d3.select('body').select('#LeftBaseSVG').selectAll('rect').remove();
+    d3.select('body').select('#LeftLayoutSVG').selectAll("svg > *").remove();
+
+    var interior_color = roomcolor("Interior wall");
+    var border = 4;
+    console.log("CreateLeftPlan", roombx);
+    for (var i = 0; i < roombx.length; i++) {
+        var rx = roombx[i][0][0];
+        var ry = roombx[i][0][1];
+        var rw = roombx[i][0][2] - roombx[i][0][0];
+        var rh = roombx[i][0][3] - roombx[i][0][1];
+        var color = roomcolor(roombx[i][1][0]);
+        var tooltip = d3.select("body").append("div")
+            .attr("class", "tooltip") //用于css设置类样式
+            .attr("opacity", 0.0).attr("id", "tooltip" + roombx[i][1][0])
+            .text(roombx[i][1][0]);
+        d3.select("#LeftLayoutSVG").append("rect").attr("x", rx)//每个矩形的起始x坐标
+            .attr("y", ry)
+            .attr("width", rw)
+            .attr("height", rh)//每个矩形的高度
+            .attr("stroke-width", border)//加边框厚度
+            .attr("stroke", interior_color)
+            .attr("fill", color)//填充颜色
+            .attr("id", roombx[i][1][0] + "_" + roombx[i][2])
+            .on("mousedown", rect_mousedown)
+            .on("mousemove", rect_mousemove)
+            .on("mouseup", rect_mouseup)
+            .on("click", rect_click)
+            .on("dblclick", rect_dblclick)
+            .append("title")//此处加入title标签
+            .text(roombx[i][1][0]);//title标签的文字
+
+    }
+    // for (var i = 0; i < indoor.length; i++) {
+    //     d3.select("#LeftLayoutSVG").append("rect").attr("x", indoor[i][0])//每个矩形的起始x坐标
+    //         .attr("y", indoor[i][1])
+    //         .attr("width", indoor[i][2])
+    //         .attr("height", indoor[i][3])//每个矩形的高度
+    //         .attr("fill", roomcolor("Interior door"));//填充颜色
+    // }
+
+    d3.select("#LeftLayoutSVG")
+        .append("polygon")
+        .attr("points", hsex)
+        .attr("fill", "none")
+        .attr("stroke", roomcolor("Exterior wall"))
+        .attr("stroke-width", border);
+    var door = door.split(",");
+    var fontdoor_color = roomcolor("Front door");
+    d3.select('body').select('#LeftLayoutSVG').append('line')
+        .attr("x1", parseInt(door[0]))
+        .attr("y1", door[1])
+        .attr("x2", door[2])
+        .attr("y2", door[3])
+        .attr("stroke", fontdoor_color)
+        .attr("stroke-width", border);
+
+
+    var wincolor = d3.rgb(195, 195, 195);
+    // for (var i = 0; i < windows.length; i++) {
+    //
+    //     d3.select("#LeftBaseSVG").append("rect").attr("x", windows[i][0])//每个矩形的起始x坐标
+    //         .attr("y", windows[i][1])
+    //         .attr("width", windows[i][2])
+    //         .attr("height", windows[i][3])//每个矩形的高度
+    //         .attr("fill", "#ffffff")
+    //         .attr("stroke",wincolor)
+    //          .attr("stroke-width", 1);
+    // }
+//boudary clip
+    //??
+    // d3.select("body").select("#LeftCanvas").attr("style", "display:none");
+    d3.select("#LeftLayoutSVG").append("clipPath")
+        .attr("id", "clip-th")
+        .append("polygon")
+        .attr("points", hsex);
+    // for (var i = 0; i < windows.length; i++) {
+    //
+    //     d3.select("#LeftLayoutSVG").append("rect").attr("x", windows[i][0])//每个矩形的起始x坐标
+    //         .attr("y", windows[i][1])
+    //         .attr("width", windows[i][2])
+    //         .attr("height", windows[i][3])//每个矩形的高度
+    //         .attr("fill", wincolor).attr("fill","#ffffff" )
+    //         .attr("stroke",wincolor)
+    //          .attr("stroke-width", 1);
+    // }
+    // for (var i = 0; i < windowsline.length; i++) {
+    //     d3.select('body').select('#LeftLayoutSVG').append('line')
+    //         .attr("x1", windowsline[i][0])
+    //         .attr("y1", windowsline[i][1])
+    //         .attr("x2", windowsline[i][2])
+    //         .attr("y2", windowsline[i][3]).attr("stroke",wincolor)
+    //          .attr("stroke-width", 1) .attr("class", "windowsline");
+    // }
+
+    d3.select('body').select('#LeftLayoutSVG').attr("transform", "scale(2)");
+    d3.select("#LeftLayoutSVG").attr("clip-path", "url(#clip-th)");
+
+}
+
+function CreateRightImage(roomID) {
+    $.getJSON("/index/LoadTrainHouse/", {'roomID': roomID}, function (ret) {
+        //Graph edge
+        for (var i = 0; i < ret['hsedge'].length; i++) {
+            var roomA = ret['hsedge'][i][0];
+            var roomB = ret['hsedge'][i][1];
+
+            d3.select('body').select('#RightSVG').append('line')
+                .attr("x1", ret['rmpos'][roomA][2])
+                .attr("y1", ret['rmpos'][roomA][3])
+                .attr("x2", ret['rmpos'][roomB][2])
+                .attr("y2", ret['rmpos'][roomB][3])
+                .attr("stroke", "#000000")
+                .attr("stroke-width", "2px")
+                .attr("id", ret['rmpos'][roomA][1] + "-" + ret['rmpos'][roomB][1])
+        }
+        //Graph node size
+        console.log(ret['rmsize']);
+        console.log(ret['rmpos']);
+        //Graph node
+        for (var i = 0; i < ret['rmpos'].length; i++) {
+            d3.select('body').select('#RightSVG').append('circle')
+                .attr("cx", ret['rmpos'][i][2])
+                .attr("cy", ret['rmpos'][i][3])
+                .attr("fill", roomcolor(ret['rmpos'][i][1]))
+                // .attr("r", 5)
+                .attr("r", ret['rmsize'] [i][0][0])
+
+                .attr("stroke", "#000000")
+                .attr("stroke-width", 2)
+                .attr("id", (i + 1) + "-" + ret['rmpos'][i][1])
+        }
+        d3.select('body').select('#RightSVG').attr("transform", "scale(2)");
+
+        var border = 4;
+        //Layout room
+        var roombx = ret["hsbox"];
+        var interiorwall_color = roomcolor("Interior wall");
+        for (var i = 0; i < roombx.length; i++) {
+
+            var rx = roombx[i][0][0];
+            var ry = roombx[i][0][1];
+            var rw = roombx[i][0][2] - roombx[i][0][0];
+            var rh = roombx[i][0][3] - roombx[i][0][1];
+            var color = roomcolor(roombx[i][1][0]);
+
+            d3.select("#RightLayoutSVG")
+                .append("rect")
+                .attr("x", rx)//每个矩形的起始x坐标
+                .attr("y", ry)
+                .attr("width", rw)
+                .attr("height", rh)//每个矩形的高度
+                .attr("stroke-width", 3)//加边框厚度
+                .attr("stroke", interiorwall_color)
+                .attr("fill", color)//填充颜色
+                .attr("id", roombx[i][1][0]);
+        }
+
+        var hsex = ret["exterior"];
+
+        //clip over boundary
+        d3.select("#RightLayoutSVG").append("clipPath")
+            .attr("id", "Rightclip-th")
+            .append("polygon")
+            .attr("points", hsex);
+        d3.select("#RightLayoutSVG").attr("clip-path", "url(#Rightclip-th)");
+        //Layout Boundary
+        d3.select("#RightLayoutSVG")
+            .append("polygon")
+            .attr("points", hsex)
+            .attr("fill", "none")
+            .attr("stroke", roomcolor("Exterior wall"))
+            .attr("stroke-width", 6);
+        //door
+        var door = ret['door'].split(",");
+
+        var fontdoor_color = roomcolor("Front door");
+        d3.select('body').select('#RightLayoutSVG').append('line')
+            .attr("x1", door[0])
+            .attr("y1", door[1])
+            .attr("x2", door[2])
+            .attr("y2", door[3])
+            .attr("stroke", fontdoor_color)
+            .attr("stroke-width", 6);
+    });
+    d3.select('body').select('#RightLayoutSVG').attr("transform", "scale(2)");
+
+}
+
+function GetEditGraph(ret) {
+    var hsname = null;
+    var arr, reg = new RegExp("(^| )hsname=([^;]*)(;|$)");
+    if (arr = document.cookie.match(reg))
+        hsname = arr[2];
+
+    var newCircles = d3.select("body").select("#LeftGraphSVG").selectAll("circle");
+    console.log(newCircles);
+    var GraphNode = [];
+    newCircles.each(function (d, i) {
+        // console.log(this.cx.animVal.value, this.cy.animVal.value, this.id);
+        var newnode = [];
+        var idlist = this.id.split("_");
+        newnode.push(idlist[1]);
+        newnode.push(idlist[2]);
+        newnode.push(this.cx.animVal.value);
+        newnode.push(this.cy.animVal.value);
+        console.log(this.attributes.scalesize.value);
+        newnode.push(this.attributes.scalesize.value);
+        GraphNode.push(newnode);
+        // GraphNode.push(newnode);
+    });
+    var newLine = d3.select("body").select("#LeftGraphSVG").selectAll("line");
+    // console.log(newLine);
+    var GraphEdge = [];
+    newLine.each(function (d, i) {
+        var newedge = [];
+        var idlist = this.id.split("_");
+        newedge.push(idlist[1]);
+        newedge.push(idlist[2]);
+        GraphEdge.push(newedge);
+    });
+    var NewGraph = [];
+    NewGraph.push(GraphNode);
+    NewGraph.push(GraphEdge);
+    if (ret != 0) {
+        NewGraph.push(ret);
+    }
+    return NewGraph
+}
+
+function GetEditLayout() {
+    var hsname = null;
+    var arr, reg = new RegExp("(^| )hsname=([^;]*)(;|$)");
+    if (arr = document.cookie.match(reg))
+        hsname = arr[2];
+
+    var newRects = d3.select("body").select("#LeftLayoutSVG").selectAll("rect");
+    console.log("newRects", newRects);
+    var LayRect = [];
+    newRects.each(function (d, i) {
+        var newrect = [];
+        var idlist = this.id.split("_");
+        newrect.push(idlist[0]);
+        newrect.push(idlist[1]);
+        newrect.push(this.x.animVal.value);
+        newrect.push(this.y.animVal.value);
+        newrect.push(this.x.animVal.value + this.width.animVal.value);
+        newrect.push(this.y.animVal.value + this.height.animVal.value);
+        LayRect.push(newrect);
+    });
+    return LayRect
+}
+
+function GraphSearch() {
+    document.getElementById("graphdiv").style = "display:none;cursor: default;color: #000;width: 90px;border: 2px solid #0072ca;border-radius: 30px;text-align: center;vertical-align: middle;line-height: 26px;height: 30px;position: absolute;margin-left: 300px;";
+    document.getElementById("layoutdiv").style = "display:none;cursor: default;color: #000;width: 90px;border: 2px solid #0072ca;border-radius: 30px;text-align: center;vertical-align: middle;line-height: 26px;height: 30px;position: absolute;margin-left: 400px;";
+
+    var hsname = null;
+    var arr, reg = new RegExp("(^| )hsname=([^;]*)(;|$)");
+    if (arr = document.cookie.match(reg))
+        hsname = arr[2];
+    NewGraph = GetEditGraph(0);
+    var rooms = [];
+    rooms.push(hsname);
+    var obj = Num();
+    var Numrooms = [];
+    Numrooms.push(obj.roomactarr);
+    Numrooms.push(obj.roomexaarr);
+    Numrooms.push(obj.roomnumarr);
+    $.get("/index/GraphSearch/", {
+        'NewGraph': JSON.stringify(NewGraph),
+        'userRoomID': hsname,
+        'Numrooms': JSON.stringify(Numrooms),
+    }, function (ret) {
+        ListBox(ret, rooms)
+    });
+}
+
+function CreateLeftGraph(rooms, roomID) {
+    $.getJSON("/index/TransGraph/", {'userInfo': rooms.toString(), 'roomID': roomID}, function (ret) {
+        //     $.getJSON("/index/TransGraph_net/", {'userInfo': rooms.toString(), 'roomID': roomID}, function (ret) {
+        document.getElementById("Generate").onclick = function () {
+            var AdjustNewGraph = [];
+            AdjustNewGraph = GetEditGraph(ret['rmpos']);
+            // NewGraph.push(ret['rmpos']);
+
+            $.get("/index/AdjustGraph/", {
+                'NewGraph': JSON.stringify(AdjustNewGraph),
+                'userRoomID': rooms.toString().split(',')[0],
+                'adptRoomID': roomID
+            }, function (adjust_ret) {
+                // console.log("ret");
+                CreateLeftPlan(adjust_ret['roomret'], adjust_ret['exterior'], adjust_ret["door"], adjust_ret["windows"], adjust_ret["indoor"], adjust_ret["windowsline"]);
+                d3.select('body').select('#LeftGraphSVG').selectAll('circle').attr("r", 0);
+                console.log(adjust_ret['rmpos']);
+
+                for (var i = 0; i < adjust_ret['rmpos'].length; i++) {
+                    var id = null;
+                    var Circlesize = null;
+                    id = "TransCircle" + "_" + adjust_ret['rmpos'][i][4] + "_" + adjust_ret['rmpos'][i][1];
+                    Circlesize = d3.select("body").select("#LeftGraphSVG").select("#" + id);
+                    // console.log(id);
+                    // console.log(adjust_ret['rmsize'][i][0]);
+                    if (parseInt((adjust_ret['rmsize'][i][0])) == 0) {
+                        adjust_ret['rmsize'][i][0] = 4;
+                    }
+                    Circlesize.attr("r", adjust_ret['rmsize'][i][0]);
+                }
+            });
+        };
+
+        for (var i = 0; i < ret['hsedge'].length; i++) {
+            var roomA = ret['hsedge'][i][0];
+            var roomB = ret['hsedge'][i][1];
+            var A_B = ret['hsedge'][i][2];
+            var id = "TransLine" + "_" + roomA + "_" + roomB + "_" + A_B;
+
+            CreateLine(ret['rmpos'][roomA][2], ret['rmpos'][roomA][3],
+                ret['rmpos'][roomB][2], ret['rmpos'][roomB][3], id);
+        }
+        for (var i = 0; i < ret['rmpos'].length; i++) {
+
+            var id = "TransCircle" + "_" + i + "_" + ret['rmpos'][i][1];
+            CreateCircle(ret['rmpos'][i][2], ret['rmpos'][i][3], id, ret['rmsize'] [i][0][0]);
+            d3.select("body").select("#LeftGraphSVG").select("#" + id).attr('scalesize', 1);
+
+        }
+
+        document.cookie = "RoomNum=" + ret['rmpos'].length;
+        NewGraph = GetEditGraph(ret['rmpos']);
+        $.get("/index/AdjustGraph/", {
+            'NewGraph': JSON.stringify(NewGraph),
+            'userRoomID': rooms.toString().split(',')[0],
+            'adptRoomID': roomID
+        }, function (adjust_ret) {
+            // console.log("ret");
+            CreateLeftPlan(adjust_ret['roomret'], adjust_ret['exterior'], adjust_ret["door"], adjust_ret["windows"], adjust_ret["indoor"], adjust_ret["windowsline"]);
+            document.getElementById("downLoad").onclick = function () {
+                var arr, reg = new RegExp("(^| )hsname=([^;]*)(;|$)");
+                if (arr = document.cookie.match(reg))
+                    hsname = arr[2];
+                console.log(focus_rect);
+                if (document.getElementById("graph").checked == true)  {
+                    var link = document.createElement('a');
+                    link.href = "../static/" + hsname.split(".")[0] + ".mat";
+                    var event = document.createEvent('MouseEvents');
+                    event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+                    link.dispatchEvent(event);
+                } else {
+                    console.log("editing");
+                    var NewLay = [];
+                    NewLay = GetEditLayout();
+                    var newGraph = [];
+                    newGraph = GetEditGraph(ret['rmpos']);
+                    $.get("/index/Save_Editbox/", {
+                        'NewLay': JSON.stringify(NewLay),
+                        'NewGraph': JSON.stringify(newGraph),
+                        'userRoomID': rooms.toString().split(',')[0],
+                        'adptRoomID': roomID
+                    }, function (flag) {
+
+                            var link = document.createElement('a');
+                            link.href = "../static/" + hsname.split(".")[0] + ".png.mat";
+                            var event = document.createEvent('MouseEvents');
+                            event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+                            link.dispatchEvent(event);
+
+
+
+
+                    });
+                }
+
+            }
+
+        });
+
+    });
+    d3.select('body').select('#LeftGraphSVG').attr("transform", "scale(2)");
+
+}
+
+function showGraph(oCtl) {
+    // $(oCtl).is(':checked') ? d3.select("body").select("#LeftGraphSVG").attr("opacity", "1.0") : d3.select("body").select("#LeftGraphSVG").attr("opacity", "0.0");
+    // $(oCtl).is(':checked') ? d3.select("body").select("#LeftGraphSVG").attr("style", "position: relative;z-index:999!important;") : d3.select("body").select("#LeftGraphSVG").attr("style", "position: relative;z-index:888 !important;");
+    // $(oCtl).is(':checked') ? d3.select("body").select("#LeftLayoutSVG").attr("style", "position: relative;margin-left: -259.5px;z-index:888!important;") : d3.select("body").select("#LeftLayoutSVG").attr("style", "position: relative;margin-left: -259.5px;z-index:999 !important;");
+    if ($(oCtl).is(':checked')) {
+        if (document.getElementById("layout").checked == true) {
+            d3.select("body").select("#LeftGraphSVG").attr("display", "flex").attr("style", "margin-left: 128px;margin-top: 128px;position: absolute;z-index:999!important;");
+            d3.select("body").select("#LeftLayoutSVG").attr("style", "margin-left: 128px;margin-top: 128px;position: absolute;z-index:888!important;").attr("opacity", "1.0");
+        } else {
+            d3.select("body").select("#LeftGraphSVG").attr("display", "flex").attr("style", "margin-left: 128px;margin-top: 128px;position: absolute;z-index:999!important;");
+            d3.select("body").select("#LeftLayoutSVG").attr("style", "margin-left: 128px;margin-top: 128px;position: absolute;z-index:888!important;").attr("opacity", "0.0");
+        }
+        document.getElementById("graphimg").style = "display:inline-flex;";
+        document.getElementById("graphdiv").style = "cursor: default;color: #000;width: 90px;border: 2px solid #0072ca;border-radius: 30px;text-align: center;vertical-align: middle;line-height: 26px;height: 30px;position: absolute;margin-left: 300px;"
+        document.getElementById("Editing").style = "display:none;";
+
+    } else {
+        document.getElementById("graphimg").style = "display:none;";
+        document.getElementById("Editing").style = "display:flex;margin-left: 140px;     margin-top: inherit;";
+
+        // 方法一
+
+        if (document.getElementById("layout").checked == true) {
+            d3.select("body").select("#LeftGraphSVG").attr("display", "none").attr("style", "margin-left: 128px;margin-top: 128px;position: absolute;z-index:888!important;");
+            d3.select("body").select("#LeftLayoutSVG").attr("style", "margin-left: 128px;margin-top: 128px;position: absolute;z-index:999!important;").attr("opacity", "1.0");
+        } else {
+            d3.select("body").select("#LeftGraphSVG").attr("display", "none").attr("style", "margin-left: 128px;margin-top: 128px;position: absolute;z-index:999!important;");
+            d3.select("body").select("#LeftLayoutSVG").attr("style", "margin-left: 128px;margin-top: 128px;position: absolute;z-index:888!important;").attr("opacity", "0.0");
+        }
+        document.getElementById("graphdiv").style = "cursor: default;color: #000;width: 90px;        border: 2px solid #bfbfbf;border-radius: 30px;text-align: center;vertical-align: middle;line-height: 26px;height: 30px;position: absolute;margin-left: 300px;"
+
+    }
+}
+
+function showRoom(oCtl) {
+    // $(oCtl).is(':checked') ? d3.select("body").select("#LeftLayoutSVG").attr("opacity", "1.0") : d3.select("body").select("#LeftLayoutSVG").attr("opacity", "0.0");
+    // $(oCtl).is(':checked') ? d3.select("body").select("#LeftLayoutSVG").attr("style", "position: relative;margin-left: -259.5px;z-index:888!important;") : d3.select("body").select("#LeftLayoutSVG").attr("style", "position: relative;margin-left: -259.5px;z-index:888!important;");
+    // $(oCtl).is(':checked') ? d3.select("body").select("#LeftGraphSVG").attr("style", "position: relative;z-index:999!important;") : d3.select("body").select("#LeftGraphSVG").attr("style", "position: relative;z-index:999!important;");
+    if ($(oCtl).is(':checked')) {
+        if (document.getElementById("graph").checked == true) {
+            d3.select("body").select("#LeftGraphSVG").attr("display", "flex").attr("style", "margin-left: 128px;margin-top: 128px;position: absolute;z-index:999!important;");
+            d3.select("body").select("#LeftLayoutSVG").attr("style", "margin-left: 128px;margin-top: 128px;position: absolute;z-index:888!important;").attr("opacity", "1.0");
+        } else {
+            d3.select("body").select("#LeftGraphSVG").attr("display", "flex").attr("style", "margin-left: 128px;margin-top: 128px;position: absolute;z-index:888!important;");
+            d3.select("body").select("#LeftLayoutSVG").attr("style", "margin-left: 128px;margin-top: 128px;position: absolute;z-index:999!important;").attr("opacity", "1.0");
+        }
+        document.getElementById("layoutimg").style = "display:inline-flex;";
+        document.getElementById("layoutdiv").style = "cursor: default;color: #000;width: 90px;border: 2px solid #0072ca;border-radius: 30px;text-align: center;vertical-align: middle;line-height: 26px;height: 30px;position: absolute;margin-left: 400px;"
+
+    } else {
+        if (document.getElementById("graph").checked == true) {
+            d3.select("body").select("#LeftGraphSVG").attr("display", "flex").attr("style", "margin-left: 128px;margin-top: 128px;position: absolute;z-index:999!important;");
+            d3.select("body").select("#LeftLayoutSVG").attr("style", "margin-left: 128px;margin-top: 128px;position: absolute;z-index:888!important;").attr("opacity", "0.0");
+        } else {
+            d3.select("body").select("#LeftGraphSVG").attr("display", "none").attr("style", "margin-left: 128px;margin-top: 128px;position: absolute;z-index:999!important;");
+            d3.select("body").select("#LeftLayoutSVG").attr("style", "margin-left: 128px;margin-top: 128px;position: absolute;z-index:888!important;").attr("opacity", "0.0");
+        }
+        document.getElementById("layoutimg").style = "display:none;";
+        document.getElementById("layoutdiv").style = "cursor: default;color: #000;width: 90px;border: 2px solid #bfbfbf;border-radius: 30px;text-align: center;vertical-align: middle;line-height: 26px;height: 30px;position: absolute;margin-left: 400px;"
+
+    }
+}
+
+function circle_mousedown() {
+    console.log("circle_mousedown");
+
+    if (createNewLine) {
+
+        var id = "TransLine" + "_" + startPoint[0].split("_")[1] + "_" + this.id.split("_")[1] + "_0";
+
+        if (hasLine(id)) {
+            return;
+        }
+
+        var points = d3.select("body").select("#LeftGraphSVG").selectAll("circle").attr("stroke", "#000000").attr("stroke-width", 2);
+        var selectPoint = d3.select("body").select("#LeftGraphSVG").select("#" + this.id).attr("stroke", "#000000").attr("stroke-width", 2);
+        scalesize = d3.select("body").select("#LeftGraphSVG").select("#" + this.id).attr("scalesize");
+
+        CreateLine(startPoint[1], startPoint[2], this.cx.animVal.value, this.cy.animVal.value, id);
+
+        d3.select(this).remove();
+        d3.select("#" + startPoint[0]).remove();
+        adjust_graph = true;
+        CreateCircle(startPoint[1], startPoint[2], startPoint[0], startPoint[3]);
+        var start = d3.select("body").select("#LeftGraphSVG").select("#" + startPoint[0]).attr("scalesize", startPoint[4]);
+        CreateCircle(this.cx.animVal.value, this.cy.animVal.value, this.id, selectPoint.attr('r'));
+        var end = d3.select("body").select("#LeftGraphSVG").select("#" + this.id).attr("scalesize", scalesize);
+        createNewLine = false;
+        return;
+    }
+
+    focus_circle = true;
+    var points = d3.select("body").select("#LeftGraphSVG").selectAll("circle").attr("stroke", "#000000").attr("stroke-width", 2);
+    var selectPoint = d3.select("body").select("#LeftGraphSVG").select("#" + this.id).attr("stroke", "rgba(0,0,0,0.56)").attr("stroke-width", 2);
+    var isDelete = document.querySelector('#isDelete');
+    //禁用系统右键菜单
+    document.oncontextmenu = function (eve) {
+        return false;
+    };
+
+    if (d3.event.button == 2) {
+        // var deletealert = confirm("是否删除？");
+        // if (deletealert == true) {
+        //     selectPoint.remove();
+        //     focus_circle = false;
+        //     adjust_graph = true;
+        //     var pointInd = this.id.split("_")[1];
+        //
+        //     var lines = d3.select("body").select("#LeftGraphSVG").selectAll(".TransLine");
+        //     lines.each(function (d, i) {
+        //         var startPoint = this.id.split("_")[1];
+        //         var endPoint = this.id.split("_")[2];
+        //
+        //         if (startPoint == pointInd || endPoint == pointInd) {
+        //             adjust_graph = true;
+        //             d3.select(this).remove();
+        //         }
+        //     })
+        // }
+        var leftsvg = document.getElementById('LeftGraphSVG');
+
+//自定义右键菜单唤醒和关闭
+        isDelete.style.left = (d3.event.clientX - 256) + 'px';
+        isDelete.style.top = (d3.event.clientY) + 'px';
+        isDelete.style.display = 'block';
+        var pointInd = this.id.split("_")[1];
+
+        //事件委托写法
+        isDelete.onmousedown = function (eve) {
+
+            if (eve.target.innerText == 'Delete') {
+                setTimeout(function () {
+                    selectPoint.remove();
+                    focus_circle = false;
+                    adjust_graph = true;
+
+                    var lines = d3.select("body").select("#LeftGraphSVG").selectAll(".TransLine");
+                    lines.each(function (d, i) {
+                        var startPoint = this.id.split("_")[1];
+                        var endPoint = this.id.split("_")[2];
+
+                        if (startPoint == pointInd || endPoint == pointInd) {
+                            adjust_graph = true;
+                            d3.select(this).remove();
+                        }
+                    })
+                }, 10);
+            }
+            if (eve.target.innerText == 'Scale*0.5') {
+                SelectRadius = selectPoint.attr('r');
+                ScaleRadius = SelectRadius * 0.5;
+                selectPoint.attr('r', ScaleRadius);
+                selectPoint.attr('scalesize', 0.5);
+                console.log(selectPoint.attr('scalesize'));
+            }
+            if (eve.target.innerText == 'Scale*0.25') {
+                SelectRadius = selectPoint.attr('r');
+                ScaleRadius = SelectRadius * 0.25;
+                selectPoint.attr('r', ScaleRadius);
+                selectPoint.attr('scalesize', 0.25);
+                console.log(selectPoint.attr('scalesize'));
+            }
+            if (eve.target.innerText == 'Scale*5') {
+                SelectRadius = selectPoint.attr('r');
+                ScaleRadius = SelectRadius * 5;
+                selectPoint.attr('r', ScaleRadius);
+                selectPoint.attr('scalesize', 5);
+                console.log(selectPoint.attr('scalesize'));
+            }
+            if (eve.target.innerText == 'Scale*2') {
+                SelectRadius = selectPoint.attr('r');
+                ScaleRadius = SelectRadius * 2;
+                selectPoint.attr('r', ScaleRadius);
+                selectPoint.attr('scalesize', 2);
+                console.log(selectPoint.attr('scalesize'));
+            }
+
+            isDelete.style.display = 'none';
+        }
+        $(document).click(function (e) {
+            var pop = $('#isDelete')[0];
+            if (e.target != pop && !$.contains(pop, e.target)) pop.style.display = 'none'
+        })
+    }
+
+}
+
+function hasLine(id) {
+    var lines = d3.select(".TransLine");
+
+    lines.each(function (d, i) {
+        if (this.id == id)
+            return true;
+    });
+
+    return false;
+}
+
+function circle_mousemove() {
+
+    console.log("Move!");
+
+    if (focus_circle) {
+        var leftsvg = document.getElementById('LeftGraphSVG');
+        let newX = d3.event.x - leftsvg.getBoundingClientRect().left;
+        let newY = d3.event.y - leftsvg.getBoundingClientRect().top;
+
+        // console.log(newX + " " + newY)
+
+        var transLines = d3.select("body").select("#LeftGraphSVG").selectAll(".TransLine");
+
+        var pointID = (this.id).split("_")[1];
+
+        transLines.each(function (d, i) {
+            var tmp_array = (this.id).split("_");
+
+            if (tmp_array[1] == pointID) {
+                d3.select(this).attr("x1", newX / 2).attr("y1", newY / 2);
+            }
+            if (tmp_array[2] == pointID) {
+                d3.select(this).attr("x2", newX / 2).attr("y2", newY / 2);
+            }
+        })
+
+        var selectPoint = d3.select("body").select("#LeftGraphSVG").select("#" + this.id)
+            .attr("cx", newX / 2).attr("cy", newY / 2);
+        adjust_graph = true;
+        // console.log(adjust_graph, "adjust")
+    }
+}
+
+function circle_mouseup() {
+    focus_circle = false;
+}
+
+function circle_dblclick() {
+    createNewLine = true;
+    var selectPoint = d3.select("body").select("#LeftGraphSVG").select("#" + this.id).attr("stroke", "#d84447").attr("stroke-width", 3);
+
+    startPoint[0] = this.id;
+    startPoint[1] = this.cx.animVal.value;
+    startPoint[2] = this.cy.animVal.value;
+    console.log(this.r.animVal.value);
+    startPoint[3] = this.r.animVal.value;
+    startPoint[4] = this.attributes.scalesize.value;
+}
+
+function line_mousedown() {
+    focus_line = true;
+    var lines = d3.select("body").select("#LeftGraphSVG").selectAll("line").attr("stroke", "#000000")
+    var selectLine = d3.select("body").select("#LeftGraphSVG").select("#" + this.id).attr("stroke", "#d83230");
+
+    if (d3.event.button == 2) {
+
+        //var startPoint = this.id.split("_")[1];
+        //var endPoint = this.id.split("_")[2];
+
+        //console.log(startPoint,endPoint);
+
+        //var isStartSingle = true;
+        //var isEndSingle = true;
+
+        selectLine.remove();
+
+        //var curlines = d3.select("body").select("#LeftGraphSVG").selectAll("line");
+
+        /*curlines.each(function(d,i){
+            var tmp_start = this.id.split("_")[1];
+            var tmp_end = this.id.split("_")[2];
+
+            if(startPoint == tmp_start || startPoint == tmp_end) isStartSingle = false;
+            if(endPoint == tmp_start || endPoint == tmp_end) isEndSingle = false;
+        })
+
+        console.log(isStartSingle,isEndSingle);
+
+        var circles = d3.select("body").select("#LeftGraphSVG").selectAll(".TransCircle");
+
+        circles.each(function(d,i){
+            var tmp_ind = this.id.split("_")[1];
+
+            if(isStartSingle && tmp_ind==startPoint) d3.select(this).remove();
+            if(isEndSingle && tmp_ind==endPoint) d3.select(this).remove();
+        })*/
+
+        focus_line = false;
+    }
+}
+
+function line_mouseup() {
+    focus_line = false;
+}
+
+function rect_mousedown() {
+    console.log("rect_mousedown");
+
+    if (focus_rect != "") {
+        var leftlaysvg = document.getElementById('LeftLayoutSVG');
+
+        let mousex = (d3.event.x - leftlaysvg.getBoundingClientRect().left) / 2;
+        let mousey = (d3.event.y - leftlaysvg.getBoundingClientRect().top) / 2;
+        var oldx = startRectvalue[0];
+        var oldy = startRectvalue[1];
+        var oldw = startRectvalue[2];
+        var oldh = startRectvalue[3];
+
+        Type = rectzoomType(mousex, mousey, oldx, oldy, oldw, oldh);
+        console.log(Type);
+
+        rect_type = true;
+    }
+}
+
+function rectzoomType(mousex, mousey, oldx, oldy, oldw, oldh) {
+    if (oldy < mousey && mousey < oldy + oldh) {
+        if (mousex < oldx + oldw + 16) {
+            // $('#LeftLayoutSVG').css('cursor', 'e-resize');
+            if (oldx + oldw - 16 < mousex) {
+                d3.select("body").select("#LeftLayoutSVG").attr('cursor', 'e-resize');
+                var type = "right";
+                return type;
+            }
+        }
+        if (mousex < oldx + 12) {
+            if (oldx - 16 < mousex) {
+                d3.select("body").select("#LeftLayoutSVG").attr('cursor', 'w-resize');
+                var type = "left";
+                return type;
+
+            }
+
+        }
+    }
+    if (oldx < mousex && oldx < oldx + oldw) {
+        if (mousey < oldy + 16) {
+            if (oldy - 16 < mousey) {
+                d3.select("body").select("#LeftLayoutSVG").attr('cursor', 'n-resize');
+                var type = "top";
+                return type;
+            }
+
+
+        }
+        if (mousey < oldy + oldh + 16) {
+            if (oldy + oldh - 16 < mousey) {
+                d3.select("body").select("#LeftLayoutSVG").attr('cursor', 's-resize');
+                var type = "down";
+                return type;
+
+            }
+
+        }
+    }
+    if (type == undefined) {
+        d3.select("body").select("#LeftLayoutSVG").attr('cursor', 'default');
+
+    }
+}
+
+function rect_mousemove() {
+
+    var leftlaysvg = document.getElementById('LeftLayoutSVG');
+    let mousex = (d3.event.x - leftlaysvg.getBoundingClientRect().left) / 2;
+    let mousey = (d3.event.y - leftlaysvg.getBoundingClientRect().top) / 2;
+        console.log("rect_mousemove",mousex,mousey);
+    console.log(focus_rect);
+    if (focus_rect == "dblclick") {
+        // var oldx = this.x.animVal.value;
+        // var oldy = this.y.animVal.value;
+        //
+        // var oldw = this.width.animVal.value;
+        // var oldh = this.height.animVal.value;
+        var oldx = startRectvalue[0];
+        var oldy = startRectvalue[1];
+        var oldw = startRectvalue[2];
+        var oldh = startRectvalue[3];
+        rectzoomType(mousex, mousey, oldx, oldy, oldw, oldh);
+        // console.log(type);
+        if (rect_type) {
+            var item = null;
+            var obj = document.getElementsByName("edit");
+            for (var i = 0; i < obj.length; i++) { //遍历Radio
+                if (obj[i].checked) {
+                    item = obj[i].value;
+                }
+            }
+
+            if (item == "local") {
+                switch (Type) {
+                    case "right":
+                        selectRect.attr("width", mousex - oldx);
+                        break;
+                    case "left":
+                        // selectRect.attr("x", mousex).attr("width", mousex - oldx + oldw);
+                        selectRect.attr("x", mousex);
+                        selectRect.attr("width", oldx - mousex + oldw);
+                        break;
+                    case "top":
+                        selectRect.attr("y", mousey).attr("height", oldy - mousey + oldh);
+                        break;
+                    case "down":
+                        selectRect.attr("height", mousey - oldy);
+                        break;
+
+                }
+
+            }
+            if (item == "global") {
+                switch (Type) {
+                    case "right":
+                        for (i = 0; i < RelRectvalue[0].length; i++) {
+                            var RelRect = d3.select("body").select("#LeftLayoutSVG").select("#" + RelRectvalue[0][i][4]);
+                            RelRect.attr("width", mousex - RelRectvalue[0][i][0]);
+                        }
+                        break;
+                    case "left":
+                        for (i = 0; i < RelRectvalue[1].length; i++) {
+                            var RelRect = d3.select("body").select("#LeftLayoutSVG").select("#" + RelRectvalue[1][i][4]);
+                            RelRect.attr("x", mousex);
+                            RelRect.attr("width", Number(RelRectvalue[1][i][0]) - mousex + Number(RelRectvalue[1][i][2]));
+                        }
+                        break;
+
+                    case "down":
+                        for (i = 0; i < RelRectvalue[3].length; i++) {
+                            var RelRect = d3.select("body").select("#LeftLayoutSVG").select("#" + RelRectvalue[3][i][4]);
+                            RelRect.attr("height", mousey - RelRectvalue[3][i][1]);
+                        }
+                        break;
+
+                    case "top":
+
+                        for (i = 0; i < RelRectvalue[2].length; i++) {
+                            console.log(RelRectvalue[2][i]);
+                            var RelRect = d3.select("body").select("#LeftLayoutSVG").select("#" + RelRectvalue[2][i][4]);
+                            RelRect.attr("y", mousey).attr("height", Number(RelRectvalue[2][i][1]) - mousey + Number(RelRectvalue[2][i][3]));
+                        }
+                        break;
+                }
+
+            }
+
+        }
+    }
+}
+
+
+function rect_mouseup() {
+    console.log("rect_mouseup");
+    focus_rect = "";
+    rect_type = false;
+    var interior_color = roomcolor("Interior wall");
+
+    var rects = d3.select("body").select("#LeftLayoutSVG").selectAll("rect").attr("stroke", interior_color).attr("stroke-width", 4);
+    d3.select("body").select("#LeftLayoutSVG").attr('cursor', 'default');
+
+}
+
+function rect_dblclick() {
+    console.log("rect_dblclick");
+    var item = null;
+    var obj = document.getElementsByName("edit");
+    for (var i = 0; i < obj.length; i++) { //遍历Radio
+        if (obj[i].checked) {
+            item = obj[i].value;
+        }
+    }
+    var interior_color = roomcolor("Interior wall");
+    var rects = d3.select("body").select("#LeftLayoutSVG").selectAll("rect").attr("stroke", interior_color).attr("stroke-width", 4);
+    selectRect = d3.select("body").select("#LeftLayoutSVG").select("#" + this.id).attr("stroke", "#d84447").attr("stroke-width", 4);
+    focus_rect = "dblclick";
+
+
+    startRectvalue[0] = this.x.animVal.value;
+    startRectvalue[1] = this.y.animVal.value;
+    startRectvalue[2] = this.width.animVal.value;
+    startRectvalue[3] = this.height.animVal.value;
+    if (item == "global") {
+        console.log(this.id);
+        $.get("/index/RelBox/", {
+            'selectRect': this.id
+
+        }, function (rdirgroup) {
+
+            for (k = 0; k < rdirgroup.length; k++) {
+                var RelRectvalue2 = [];
+                for (i = 0; i < rdirgroup[k].length; i++) {
+                    var RelRectvalue1 = [];
+
+                    var RelRect = d3.select("body").select("#LeftLayoutSVG").select("#" + rdirgroup[k][i]);
+                    RelRectvalue1[0] = RelRect.attr("x");
+                    RelRectvalue1[1] = RelRect.attr("y");
+                    RelRectvalue1[2] = RelRect.attr("width");
+                    RelRectvalue1[3] = RelRect.attr("height");
+                    RelRectvalue1[4] = rdirgroup[k][i];
+                    RelRectvalue2[i] = RelRectvalue1
+                }
+                RelRectvalue[k] = RelRectvalue2;
+            }
+            console.log(RelRectvalue);
+            console.log(RelRectvalue[2]);
+
+            console.log(RelRectvalue[0]);
+
+        });
+    }
+}
+
+function rect_click() {
+    console.log("rect_click");
+    focus_rect = "click";
+
+}
+
+graph.js
+
+$(function () {
+    let startPoint = [0,0];
+
+    let generate = false;
+    var roomSelect = 0;
+    var mouseDown = false;
+    var createLinew = false;
+/*
+    var leftsvg = document.getElementById('LeftGraphSVG');
+    leftsvg.oncontextmenu = function() {
+        return false;
+    }
+
+    $('#LeftGraphSVG').on('mousedown',function(e){
+
+        let selectX = e.clientX - leftsvg.getBoundingClientRect().left;
+        let selectY = e.clientY - leftsvg.getBoundingClientRect().top;
+
+        var arr,reg=new RegExp("(^| )ifSelectRoom=([^;]*)(;|$)");
+        if(arr=document.cookie.match(reg)){
+            roomSelect = arr[2];
+        }
+        else{
+            roomSelect = 0;
+        }
+
+        if(!generate && roomSelect == 1){
+            //绘制点
+            clearHighLight();
+
+            var curRoom = "NULL";
+            var curIndex = -1;
+
+            arr,reg=new RegExp("(^| )RoomType=([^;]*)(;|$)");
+
+            if(arr=document.cookie.match(reg)){
+                curRoom = arr[2];
+            }
+
+            arr,reg=new RegExp("(^| )CurNum=([^;]*)(;|$)");
+
+            if(arr=document.cookie.match(reg)){
+                curIndex = arr[2];
+            }
+            var curPoints = d3.select("body").select("#LeftGraphSVG").selectAll("circle");
+
+            var point = d3.select("body").select("#LeftGraphSVG").append("circle").attr("fill",roomcolor(curRoom)).attr("r",5)
+                .attr("stroke","#000000").attr("stroke-width",2).attr("id","TransCircle"+curIndex+"_"+curRoom).on("mousedown",circle_mousedown)
+                .on("mousemove",circle_mousemove).on("mouseup",circle_mouseup)
+				.attr("cx",selectX/2).attr("cy",selectY/2).attr("class","TransCircle").append("title")//此处加入title标签
+            .text(curRoom);
+
+
+            roomSelect = false;
+            document.cookie = "ifSelectRoom=0";
+        }
+    })*/
+
+    $('#RightSVG').on('mousedown',function(e){
+        console.log("Right!");
+    })
+
+    function clearHighLight(){
+        var points = d3.select("body").select("#LeftGraphSVG").selectAll("circle").attr("stroke-width",0);
+    }
+
+    function circle_mousedown(){
+        mouseDown = true;
+        var points = d3.select("body").select("#LeftGraphSVG").selectAll("circle").attr("stroke-width",0);
+        var selectPoint = d3.select("body").select("#LeftGraphSVG").select("#"+this.id).attr("stroke-width",2);
+
+        if(d3.event.button == 2){
+            selectPoint.remove();
+            mouseDown = false;
+
+            var id = this.id.split("_")[1];
+
+            var checkBtns = d3.select("body").selectAll(".checkButton");
+
+            checkBtns.each(function(d,i){
+                var btn_id = this.id.split("_")[1];
+                if(id == btn_id){
+                    var checkElement = this.parentElement.parentElement;
+                    var todoList = document.getElementById('todo');
+                    checkElement.classList.remove('checked');
+                    deleteAnimation(checkElement);
+                    todoList.insertBefore(checkElement, todoList.firstChild);
+                }
+            })
+        }
+    }
+
+    function circle_mousemove(){
+        if(mouseDown){
+            let newX = d3.event.x - leftsvg.getBoundingClientRect().left;
+            let newY = d3.event.y - leftsvg.getBoundingClientRect().top;
+            var selectPoint = d3.select("body").select("#LeftGraphSVG").select("#"+this.id)
+                .attr("cx",newX/2).attr("cy",newY/2);
+        }
+    }
+
+    function circle_mouseup(){
+        mouseDown = false;
+    }
+
+    function deleteAnimation(deleteItem) {
+        /* LEFT SIDE */
+        const swirlR1 = new mojs.ShapeSwirl({
+            parent: deleteItem,
+            top: '100%',
+            left: '0%',
+            fill: 'rgba(255,255,255,1)',
+            y: {0: -100},
+            radius: 30,
+            swirlSize: 5,
+            swirlFrequency: 1,
+            duration: 500,
+            direction: -1,
+            degreeShift: 90
+        });
+        const swirlR2 = new mojs.ShapeSwirl({
+            parent: deleteItem,
+            top: '100%',
+            left: '0%',
+            fill: 'rgba(255,255,255,1)',
+            y: {0: -85},
+            radius: 25,
+            swirlSize: 5,
+            swirlFrequency: 1,
+            duration: 500,
+            direction: -1,
+            degreeShift: 70
+        });
+        const swirlR3 = new mojs.ShapeSwirl({
+            parent: deleteItem,
+            top: '100%',
+            left: '0%',
+            fill: 'rgba(255,255,255,1)',
+            y: {0: -70},
+            radius: 20,
+            swirlSize: 5,
+            swirlFrequency: 1,
+            duration: 1000,
+            direction: -1,
+            degreeShift: 50
+        });
+
+        const swirlL1 = new mojs.ShapeSwirl({
+            parent: deleteItem,
+            top: '100%',
+            left: '0%',
+            fill: 'rgba(255,255,255,1)',
+            y: {0: -100},
+            radius: 30,
+            swirlSize: 30,
+            swirlFrequency: 1,
+            duration: 1000,
+            direction: -1,
+            degreeShift: -90
+        });
+        const swirlL2 = new mojs.ShapeSwirl({
+            parent: deleteItem,
+            top: '100%',
+            left: '0%',
+            fill: 'rgba(255,255,255,1)',
+            y: {0: -85},
+            radius: 30,
+            swirlSize: 30,
+            swirlFrequency: 1,
+            duration: 500,
+            direction: -1,
+            degreeShift: -10
+        });
+        const swirlL3 = new mojs.ShapeSwirl({
+            parent: deleteItem,
+            top: '100%',
+            left: '0%',
+            fill: 'rgba(255,255,255,1)',
+            y: {0: -70},
+            radius: 30,
+            swirlSize: 30,
+            swirlFrequency: 1,
+            duration: 500,
+            direction: -1,
+            degreeShift: -30
+        });
+
+
+        /* RIGHT SIDE */
+        const swirlR1B = new mojs.ShapeSwirl({
+            parent: deleteItem,
+            top: '100%',
+            left: '100%',
+            fill: 'rgba(255,255,255,1)',
+            y: {0: -100},
+            radius: 30,
+            swirlSize: 5,
+            swirlFrequency: 1,
+            duration: 500,
+            direction: -1,
+            degreeShift: -90
+        });
+        const swirlR2B = new mojs.ShapeSwirl({
+            parent: deleteItem,
+            top: '100%',
+            left: '100%',
+            fill: 'rgba(255,255,255,1)',
+            y: {0: -85},
+            radius: 25,
+            swirlSize: 5,
+            swirlFrequency: 1,
+            duration: 500,
+            direction: -1,
+            degreeShift: -70
+        });
+        const swirlR3B = new mojs.ShapeSwirl({
+            parent: deleteItem,
+            top: '100%',
+            left: '100%',
+            fill: 'rgba(255,255,255,1)',
+            y: {0: -70},
+            radius: 20,
+            swirlSize: 5,
+            swirlFrequency: 1,
+            duration: 1000,
+            direction: -1,
+            degreeShift: -50
+        });
+
+        const swirlL1B = new mojs.ShapeSwirl({
+            parent: deleteItem,
+            top: '100%',
+            left: '100%',
+            fill: 'rgba(255,255,255,1)',
+            y: {0: -100},
+            radius: 30,
+            swirlSize: 30,
+            swirlFrequency: 1,
+            duration: 1000,
+            direction: -1,
+            degreeShift: 90
+        });
+        const swirlL2B = new mojs.ShapeSwirl({
+            parent: deleteItem,
+            top: '100%',
+            left: '100%',
+            fill: 'rgba(255,255,255,1)',
+            y: {0: -85},
+            radius: 30,
+            swirlSize: 30,
+            swirlFrequency: 1,
+            duration: 500,
+            direction: -1,
+            degreeShift: 10
+        });
+        const swirlL3B = new mojs.ShapeSwirl({
+            parent: deleteItem,
+            top: '100%',
+            left: '100%',
+            fill: 'rgba(255,255,255,1)',
+            y: {0: -70},
+            radius: 30,
+            swirlSize: 30,
+            swirlFrequency: 1,
+            duration: 500,
+            direction: -1,
+            degreeShift: 30
+        });
+
+        const timeline = new mojs.Timeline;
+
+        timeline.add(swirlR1, swirlR2, swirlR3, swirlL1, swirlL2, swirlL3, swirlR1B, swirlR2B, swirlR3B, swirlL1B, swirlL2B, swirlL3B);
+
+        timeline.play();
+    }
+})
+
+load.js
+
+'use strict';
+(function () {
+  var rebound = {};
+  var util = rebound.util = {};
+  var concat = Array.prototype.concat;
+  var slice = Array.prototype.slice;
+
+  // Bind a function to a context object.
+  util.bind = function bind(func, context) {
+    var args = slice.call(arguments, 2);
+    return function () {
+      func.apply(context, concat.call(args, slice.call(arguments)));
+    };
+  };
+
+  // Add all the properties in the source to the target.
+  util.extend = function extend(target, source) {
+    for (var key in source) {
+      if (source.hasOwnProperty(key)) {
+        target[key] = source[key];
+      }
+    }
+  };
+
+  // SpringSystem
+  // ------------
+  // **SpringSystem** is a set of Springs that all run on the same physics
+  // timing loop. To get started with a Rebound animation you first
+  // create a new SpringSystem and then add springs to it.
+  var SpringSystem = rebound.SpringSystem = function SpringSystem(looper) {
+    this._springRegistry = {};
+    this._activeSprings = [];
+    this.listeners = [];
+    this._idleSpringIndices = [];
+    this.looper = looper || new AnimationLooper();
+    this.looper.springSystem = this;
+  };
+
+  util.extend(SpringSystem.prototype, {
+
+    _springRegistry: null,
+
+    _isIdle: true,
+
+    _lastTimeMillis: -1,
+
+    _activeSprings: null,
+
+    listeners: null,
+
+    _idleSpringIndices: null,
+
+    // A SpringSystem is iterated by a looper. The looper is responsible
+    // for executing each frame as the SpringSystem is resolved to idle.
+    // There are three types of Loopers described below AnimationLooper,
+    // SimulationLooper, and SteppingSimulationLooper. AnimationLooper is
+    // the default as it is the most useful for common UI animations.
+    setLooper: function setLooper(looper) {
+      this.looper = looper;
+      looper.springSystem = this;
+    },
+
+    // Add a new spring to this SpringSystem. This Spring will now be solved for
+    // during the physics iteration loop. By default the spring will use the
+    // default Origami spring config with 40 tension and 7 friction, but you can
+    // also provide your own values here.
+    createSpring: function createSpring(tension, friction) {
+      var springConfig;
+      if (tension === undefined || friction === undefined) {
+        springConfig = SpringConfig.DEFAULT_ORIGAMI_SPRING_CONFIG;
+      } else {
+        springConfig = SpringConfig.fromOrigamiTensionAndFriction(tension, friction);
+      }
+      return this.createSpringWithConfig(springConfig);
+    },
+
+    // Add a spring with a specified bounciness and speed. To replicate Origami
+    // compositions based on PopAnimation patches, use this factory method to
+    // create matching springs.
+    createSpringWithBouncinessAndSpeed: function createSpringWithBouncinessAndSpeed(bounciness, speed) {
+      var springConfig;
+      if (bounciness === undefined || speed === undefined) {
+        springConfig = SpringConfig.DEFAULT_ORIGAMI_SPRING_CONFIG;
+      } else {
+        springConfig = SpringConfig.fromBouncinessAndSpeed(bounciness, speed);
+      }
+      return this.createSpringWithConfig(springConfig);
+    },
+
+    // Add a spring with the provided SpringConfig.
+    createSpringWithConfig: function createSpringWithConfig(springConfig) {
+      var spring = new Spring(this);
+      this.registerSpring(spring);
+      spring.setSpringConfig(springConfig);
+      return spring;
+    },
+
+    // You can check if a SpringSystem is idle or active by calling
+    // getIsIdle. If all of the Springs in the SpringSystem are at rest,
+    // i.e. the physics forces have reached equilibrium, then this
+    // method will return true.
+    getIsIdle: function getIsIdle() {
+      return this._isIdle;
+    },
+
+    // Retrieve a specific Spring from the SpringSystem by id. This
+    // can be useful for inspecting the state of a spring before
+    // or after an integration loop in the SpringSystem executes.
+    getSpringById: function getSpringById(id) {
+      return this._springRegistry[id];
+    },
+
+    // Get a listing of all the springs registered with this
+    // SpringSystem.
+    getAllSprings: function getAllSprings() {
+      var vals = [];
+      for (var id in this._springRegistry) {
+        if (this._springRegistry.hasOwnProperty(id)) {
+          vals.push(this._springRegistry[id]);
+        }
+      }
+      return vals;
+    },
+
+    // registerSpring is called automatically as soon as you create
+    // a Spring with SpringSystem#createSpring. This method sets the
+    // spring up in the registry so that it can be solved in the
+    // solver loop.
+    registerSpring: function registerSpring(spring) {
+      this._springRegistry[spring.getId()] = spring;
+    },
+
+    // Deregister a spring with this SpringSystem. The SpringSystem will
+    // no longer consider this Spring during its integration loop once
+    // this is called. This is normally done automatically for you when
+    // you call Spring#destroy.
+    deregisterSpring: function deregisterSpring(spring) {
+      removeFirst(this._activeSprings, spring);
+      delete this._springRegistry[spring.getId()];
+    },
+
+    advance: function advance(time, deltaTime) {
+      while (this._idleSpringIndices.length > 0) {
+        this._idleSpringIndices.pop();
+      }for (var i = 0, len = this._activeSprings.length; i < len; i++) {
+        var spring = this._activeSprings[i];
+        if (spring.systemShouldAdvance()) {
+          spring.advance(time / 1000.0, deltaTime / 1000.0);
+        } else {
+          this._idleSpringIndices.push(this._activeSprings.indexOf(spring));
+        }
+      }
+      while (this._idleSpringIndices.length > 0) {
+        var idx = this._idleSpringIndices.pop();
+        idx >= 0 && this._activeSprings.splice(idx, 1);
+      }
+    },
+
+    // This is our main solver loop called to move the simulation
+    // forward through time. Before each pass in the solver loop
+    // onBeforeIntegrate is called on an any listeners that have
+    // registered themeselves with the SpringSystem. This gives you
+    // an opportunity to apply any constraints or adjustments to
+    // the springs that should be enforced before each iteration
+    // loop. Next the advance method is called to move each Spring in
+    // the systemShouldAdvance forward to the current time. After the
+    // integration step runs in advance, onAfterIntegrate is called
+    // on any listeners that have registered themselves with the
+    // SpringSystem. This gives you an opportunity to run any post
+    // integration constraints or adjustments on the Springs in the
+    // SpringSystem.
+    loop: function loop(currentTimeMillis) {
+      var listener;
+      if (this._lastTimeMillis === -1) {
+        this._lastTimeMillis = currentTimeMillis - 1;
+      }
+      var ellapsedMillis = currentTimeMillis - this._lastTimeMillis;
+      this._lastTimeMillis = currentTimeMillis;
+
+      var i = 0,
+          len = this.listeners.length;
+      for (i = 0; i < len; i++) {
+        listener = this.listeners[i];
+        listener.onBeforeIntegrate && listener.onBeforeIntegrate(this);
+      }
+
+      this.advance(currentTimeMillis, ellapsedMillis);
+      if (this._activeSprings.length === 0) {
+        this._isIdle = true;
+        this._lastTimeMillis = -1;
+      }
+
+      for (i = 0; i < len; i++) {
+        listener = this.listeners[i];
+        listener.onAfterIntegrate && listener.onAfterIntegrate(this);
+      }
+
+      if (!this._isIdle) {
+        this.looper.run();
+      }
+    },
+
+    // activateSpring is used to notify the SpringSystem that a Spring
+    // has become displaced. The system responds by starting its solver
+    // loop up if it is currently idle.
+    activateSpring: function activateSpring(springId) {
+      var spring = this._springRegistry[springId];
+      if (this._activeSprings.indexOf(spring) == -1) {
+        this._activeSprings.push(spring);
+      }
+      if (this.getIsIdle()) {
+        this._isIdle = false;
+        this.looper.run();
+      }
+    },
+
+    // Add a listener to the SpringSystem so that you can receive
+    // before/after integration notifications allowing Springs to be
+    // constrained or adjusted.
+    addListener: function addListener(listener) {
+      this.listeners.push(listener);
+    },
+
+    // Remove a previously added listener on the SpringSystem.
+    removeListener: function removeListener(listener) {
+      removeFirst(this.listeners, listener);
+    },
+
+    // Remove all previously added listeners on the SpringSystem.
+    removeAllListeners: function removeAllListeners() {
+      this.listeners = [];
+    }
+
+  });
+
+  // Spring
+  // ------
+  // **Spring** provides a model of a classical spring acting to
+  // resolve a body to equilibrium. Springs have configurable
+  // tension which is a force multipler on the displacement of the
+  // spring from its rest point or `endValue` as defined by [Hooke's
+  // law](http://en.wikipedia.org/wiki/Hooke's_law). Springs also have
+  // configurable friction, which ensures that they do not oscillate
+  // infinitely. When a Spring is displaced by updating it's resting
+  // or `currentValue`, the SpringSystems that contain that Spring
+  // will automatically start looping to solve for equilibrium. As each
+  // timestep passes, `SpringListener` objects attached to the Spring
+  // will be notified of the updates providing a way to drive an
+  // animation off of the spring's resolution curve.
+  var Spring = rebound.Spring = function Spring(springSystem) {
+    this._id = 's' + Spring._ID++;
+    this._springSystem = springSystem;
+    this.listeners = [];
+    this._currentState = new PhysicsState();
+    this._previousState = new PhysicsState();
+    this._tempState = new PhysicsState();
+  };
+
+  util.extend(Spring, {
+    _ID: 0,
+
+    MAX_DELTA_TIME_SEC: 0.064,
+
+    SOLVER_TIMESTEP_SEC: 0.001
+
+  });
+
+  util.extend(Spring.prototype, {
+
+    _id: 0,
+
+    _springConfig: null,
+
+    _overshootClampingEnabled: false,
+
+    _currentState: null,
+
+    _previousState: null,
+
+    _tempState: null,
+
+    _startValue: 0,
+
+    _endValue: 0,
+
+    _wasAtRest: true,
+
+    _restSpeedThreshold: 0.001,
+
+    _displacementFromRestThreshold: 0.001,
+
+    listeners: null,
+
+    _timeAccumulator: 0,
+
+    _springSystem: null,
+
+    // Remove a Spring from simulation and clear its listeners.
+    destroy: function destroy() {
+      this.listeners = [];
+      this.frames = [];
+      this._springSystem.deregisterSpring(this);
+    },
+
+    // Get the id of the spring, which can be used to retrieve it from
+    // the SpringSystems it participates in later.
+    getId: function getId() {
+      return this._id;
+    },
+
+    // Set the configuration values for this Spring. A SpringConfig
+    // contains the tension and friction values used to solve for the
+    // equilibrium of the Spring in the physics loop.
+    setSpringConfig: function setSpringConfig(springConfig) {
+      this._springConfig = springConfig;
+      return this;
+    },
+
+    // Retrieve the SpringConfig used by this Spring.
+    getSpringConfig: function getSpringConfig() {
+      return this._springConfig;
+    },
+
+    // Set the current position of this Spring. Listeners will be updated
+    // with this value immediately. If the rest or `endValue` is not
+    // updated to match this value, then the spring will be dispalced and
+    // the SpringSystem will start to loop to restore the spring to the
+    // `endValue`.
+    //
+    // A common pattern is to move a Spring around without animation by
+    // calling.
+    //
+    // ```
+    // spring.setCurrentValue(n).setAtRest();
+    // ```
+    //
+    // This moves the Spring to a new position `n`, sets the endValue
+    // to `n`, and removes any velocity from the `Spring`. By doing
+    // this you can allow the `SpringListener` to manage the position
+    // of UI elements attached to the spring even when moving without
+    // animation. For example, when dragging an element you can
+    // update the position of an attached view through a spring
+    // by calling `spring.setCurrentValue(x)`. When
+    // the gesture ends you can update the Springs
+    // velocity and endValue
+    // `spring.setVelocity(gestureEndVelocity).setEndValue(flingTarget)`
+    // to cause it to naturally animate the UI element to the resting
+    // position taking into account existing velocity. The codepaths for
+    // synchronous movement and spring driven animation can
+    // be unified using this technique.
+    setCurrentValue: function setCurrentValue(currentValue, skipSetAtRest) {
+      this._startValue = currentValue;
+      this._currentState.position = currentValue;
+      if (!skipSetAtRest) {
+        this.setAtRest();
+      }
+      this.notifyPositionUpdated(false, false);
+      return this;
+    },
+
+    // Get the position that the most recent animation started at. This
+    // can be useful for determining the number off oscillations that
+    // have occurred.
+    getStartValue: function getStartValue() {
+      return this._startValue;
+    },
+
+    // Retrieve the current value of the Spring.
+    getCurrentValue: function getCurrentValue() {
+      return this._currentState.position;
+    },
+
+    // Get the absolute distance of the Spring from it's resting endValue
+    // position.
+    getCurrentDisplacementDistance: function getCurrentDisplacementDistance() {
+      return this.getDisplacementDistanceForState(this._currentState);
+    },
+
+    getDisplacementDistanceForState: function getDisplacementDistanceForState(state) {
+      return Math.abs(this._endValue - state.position);
+    },
+
+    // Set the endValue or resting position of the spring. If this
+    // value is different than the current value, the SpringSystem will
+    // be notified and will begin running its solver loop to resolve
+    // the Spring to equilibrium. Any listeners that are registered
+    // for onSpringEndStateChange will also be notified of this update
+    // immediately.
+    setEndValue: function setEndValue(endValue) {
+      if (this._endValue == endValue && this.isAtRest()) {
+        return this;
+      }
+      this._startValue = this.getCurrentValue();
+      this._endValue = endValue;
+      this._springSystem.activateSpring(this.getId());
+      for (var i = 0, len = this.listeners.length; i < len; i++) {
+        var listener = this.listeners[i];
+        var onChange = listener.onSpringEndStateChange;
+        onChange && onChange(this);
+      }
+      return this;
+    },
+
+    // Retrieve the endValue or resting position of this spring.
+    getEndValue: function getEndValue() {
+      return this._endValue;
+    },
+
+    // Set the current velocity of the Spring. As previously mentioned,
+    // this can be useful when you are performing a direct manipulation
+    // gesture. When a UI element is released you may call setVelocity
+    // on its animation Spring so that the Spring continues with the
+    // same velocity as the gesture ended with. The friction, tension,
+    // and displacement of the Spring will then govern its motion to
+    // return to rest on a natural feeling curve.
+    setVelocity: function setVelocity(velocity) {
+      if (velocity === this._currentState.velocity) {
+        return this;
+      }
+      this._currentState.velocity = velocity;
+      this._springSystem.activateSpring(this.getId());
+      return this;
+    },
+
+    // Get the current velocity of the Spring.
+    getVelocity: function getVelocity() {
+      return this._currentState.velocity;
+    },
+
+    // Set a threshold value for the movement speed of the Spring below
+    // which it will be considered to be not moving or resting.
+    setRestSpeedThreshold: function setRestSpeedThreshold(restSpeedThreshold) {
+      this._restSpeedThreshold = restSpeedThreshold;
+      return this;
+    },
+
+    // Retrieve the rest speed threshold for this Spring.
+    getRestSpeedThreshold: function getRestSpeedThreshold() {
+      return this._restSpeedThreshold;
+    },
+
+    // Set a threshold value for displacement below which the Spring
+    // will be considered to be not displaced i.e. at its resting
+    // `endValue`.
+    setRestDisplacementThreshold: function setRestDisplacementThreshold(displacementFromRestThreshold) {
+      this._displacementFromRestThreshold = displacementFromRestThreshold;
+    },
+
+    // Retrieve the rest displacement threshold for this spring.
+    getRestDisplacementThreshold: function getRestDisplacementThreshold() {
+      return this._displacementFromRestThreshold;
+    },
+
+    // Enable overshoot clamping. This means that the Spring will stop
+    // immediately when it reaches its resting position regardless of
+    // any existing momentum it may have. This can be useful for certain
+    // types of animations that should not oscillate such as a scale
+    // down to 0 or alpha fade.
+    setOvershootClampingEnabled: function setOvershootClampingEnabled(enabled) {
+      this._overshootClampingEnabled = enabled;
+      return this;
+    },
+
+    // Check if overshoot clamping is enabled for this spring.
+    isOvershootClampingEnabled: function isOvershootClampingEnabled() {
+      return this._overshootClampingEnabled;
+    },
+
+    // Check if the Spring has gone past its end point by comparing
+    // the direction it was moving in when it started to the current
+    // position and end value.
+    isOvershooting: function isOvershooting() {
+      var start = this._startValue;
+      var end = this._endValue;
+      return this._springConfig.tension > 0 && (start < end && this.getCurrentValue() > end || start > end && this.getCurrentValue() < end);
+    },
+
+    // Spring.advance is the main solver method for the Spring. It takes
+    // the current time and delta since the last time step and performs
+    // an RK4 integration to get the new position and velocity state
+    // for the Spring based on the tension, friction, velocity, and
+    // displacement of the Spring.
+    advance: function advance(time, realDeltaTime) {
+      var isAtRest = this.isAtRest();
+
+      if (isAtRest && this._wasAtRest) {
+        return;
+      }
+
+      var adjustedDeltaTime = realDeltaTime;
+      if (realDeltaTime > Spring.MAX_DELTA_TIME_SEC) {
+        adjustedDeltaTime = Spring.MAX_DELTA_TIME_SEC;
+      }
+
+      this._timeAccumulator += adjustedDeltaTime;
+
+      var tension = this._springConfig.tension,
+          friction = this._springConfig.friction,
+          position = this._currentState.position,
+          velocity = this._currentState.velocity,
+          tempPosition = this._tempState.position,
+          tempVelocity = this._tempState.velocity,
+          aVelocity,
+          aAcceleration,
+          bVelocity,
+          bAcceleration,
+          cVelocity,
+          cAcceleration,
+          dVelocity,
+          dAcceleration,
+          dxdt,
+          dvdt;
+
+      while (this._timeAccumulator >= Spring.SOLVER_TIMESTEP_SEC) {
+
+        this._timeAccumulator -= Spring.SOLVER_TIMESTEP_SEC;
+
+        if (this._timeAccumulator < Spring.SOLVER_TIMESTEP_SEC) {
+          this._previousState.position = position;
+          this._previousState.velocity = velocity;
+        }
+
+        aVelocity = velocity;
+        aAcceleration = tension * (this._endValue - tempPosition) - friction * velocity;
+
+        tempPosition = position + aVelocity * Spring.SOLVER_TIMESTEP_SEC * 0.5;
+        tempVelocity = velocity + aAcceleration * Spring.SOLVER_TIMESTEP_SEC * 0.5;
+        bVelocity = tempVelocity;
+        bAcceleration = tension * (this._endValue - tempPosition) - friction * tempVelocity;
+
+        tempPosition = position + bVelocity * Spring.SOLVER_TIMESTEP_SEC * 0.5;
+        tempVelocity = velocity + bAcceleration * Spring.SOLVER_TIMESTEP_SEC * 0.5;
+        cVelocity = tempVelocity;
+        cAcceleration = tension * (this._endValue - tempPosition) - friction * tempVelocity;
+
+        tempPosition = position + cVelocity * Spring.SOLVER_TIMESTEP_SEC * 0.5;
+        tempVelocity = velocity + cAcceleration * Spring.SOLVER_TIMESTEP_SEC * 0.5;
+        dVelocity = tempVelocity;
+        dAcceleration = tension * (this._endValue - tempPosition) - friction * tempVelocity;
+
+        dxdt = 1.0 / 6.0 * (aVelocity + 2.0 * (bVelocity + cVelocity) + dVelocity);
+        dvdt = 1.0 / 6.0 * (aAcceleration + 2.0 * (bAcceleration + cAcceleration) + dAcceleration);
+
+        position += dxdt * Spring.SOLVER_TIMESTEP_SEC;
+        velocity += dvdt * Spring.SOLVER_TIMESTEP_SEC;
+      }
+
+      this._tempState.position = tempPosition;
+      this._tempState.velocity = tempVelocity;
+
+      this._currentState.position = position;
+      this._currentState.velocity = velocity;
+
+      if (this._timeAccumulator > 0) {
+        this._interpolate(this._timeAccumulator / Spring.SOLVER_TIMESTEP_SEC);
+      }
+
+      if (this.isAtRest() || this._overshootClampingEnabled && this.isOvershooting()) {
+
+        if (this._springConfig.tension > 0) {
+          this._startValue = this._endValue;
+          this._currentState.position = this._endValue;
+        } else {
+          this._endValue = this._currentState.position;
+          this._startValue = this._endValue;
+        }
+        this.setVelocity(0);
+        isAtRest = true;
+      }
+
+      var notifyActivate = false;
+      if (this._wasAtRest) {
+        this._wasAtRest = false;
+        notifyActivate = true;
+      }
+
+      var notifyAtRest = false;
+      if (isAtRest) {
+        this._wasAtRest = true;
+        notifyAtRest = true;
+      }
+
+      this.notifyPositionUpdated(notifyActivate, notifyAtRest);
+    },
+
+    notifyPositionUpdated: function notifyPositionUpdated(notifyActivate, notifyAtRest) {
+      for (var i = 0, len = this.listeners.length; i < len; i++) {
+        var listener = this.listeners[i];
+        if (notifyActivate && listener.onSpringActivate) {
+          listener.onSpringActivate(this);
+        }
+
+        if (listener.onSpringUpdate) {
+          listener.onSpringUpdate(this);
+        }
+
+        if (notifyAtRest && listener.onSpringAtRest) {
+          listener.onSpringAtRest(this);
+        }
+      }
+    },
+
+    // Check if the SpringSystem should advance. Springs are advanced
+    // a final frame after they reach equilibrium to ensure that the
+    // currentValue is exactly the requested endValue regardless of the
+    // displacement threshold.
+    systemShouldAdvance: function systemShouldAdvance() {
+      return !this.isAtRest() || !this.wasAtRest();
+    },
+
+    wasAtRest: function wasAtRest() {
+      return this._wasAtRest;
+    },
+
+    // Check if the Spring is atRest meaning that it's currentValue and
+    // endValue are the same and that it has no velocity. The previously
+    // described thresholds for speed and displacement define the bounds
+    // of this equivalence check. If the Spring has 0 tension, then it will
+    // be considered at rest whenever its absolute velocity drops below the
+    // restSpeedThreshold.
+    isAtRest: function isAtRest() {
+      return Math.abs(this._currentState.velocity) < this._restSpeedThreshold && (this.getDisplacementDistanceForState(this._currentState) <= this._displacementFromRestThreshold || this._springConfig.tension === 0);
+    },
+
+    // Force the spring to be at rest at its current position. As
+    // described in the documentation for setCurrentValue, this method
+    // makes it easy to do synchronous non-animated updates to ui
+    // elements that are attached to springs via SpringListeners.
+    setAtRest: function setAtRest() {
+      this._endValue = this._currentState.position;
+      this._tempState.position = this._currentState.position;
+      this._currentState.velocity = 0;
+      return this;
+    },
+
+    _interpolate: function _interpolate(alpha) {
+      this._currentState.position = this._currentState.position * alpha + this._previousState.position * (1 - alpha);
+      this._currentState.velocity = this._currentState.velocity * alpha + this._previousState.velocity * (1 - alpha);
+    },
+
+    getListeners: function getListeners() {
+      return this.listeners;
+    },
+
+    addListener: function addListener(newListener) {
+      this.listeners.push(newListener);
+      return this;
+    },
+
+    removeListener: function removeListener(listenerToRemove) {
+      removeFirst(this.listeners, listenerToRemove);
+      return this;
+    },
+
+    removeAllListeners: function removeAllListeners() {
+      this.listeners = [];
+      return this;
+    },
+
+    currentValueIsApproximately: function currentValueIsApproximately(value) {
+      return Math.abs(this.getCurrentValue() - value) <= this.getRestDisplacementThreshold();
+    }
+
+  });
+
+  // PhysicsState
+  // ------------
+  // **PhysicsState** consists of a position and velocity. A Spring uses
+  // this internally to keep track of its current and prior position and
+  // velocity values.
+  var PhysicsState = function PhysicsState() {};
+
+  util.extend(PhysicsState.prototype, {
+    position: 0,
+    velocity: 0
+  });
+
+  // SpringConfig
+  // ------------
+  // **SpringConfig** maintains a set of tension and friction constants
+  // for a Spring. You can use fromOrigamiTensionAndFriction to convert
+  // values from the [Origami](http://facebook.github.io/origami/)
+  // design tool directly to Rebound spring constants.
+  var SpringConfig = rebound.SpringConfig = function SpringConfig(tension, friction) {
+    this.tension = tension;
+    this.friction = friction;
+  };
+
+  // Loopers
+  // -------
+  // **AnimationLooper** plays each frame of the SpringSystem on animation
+  // timing loop. This is the default type of looper for a new spring system
+  // as it is the most common when developing UI.
+  var AnimationLooper = rebound.AnimationLooper = function AnimationLooper() {
+    this.springSystem = null;
+    var _this = this;
+    var _run = function _run() {
+      _this.springSystem.loop(Date.now());
+    };
+
+    this.run = function () {
+      util.onFrame(_run);
+    };
+  };
+
+  // **SimulationLooper** resolves the SpringSystem to a resting state in a
+  // tight and blocking loop. This is useful for synchronously generating
+  // pre-recorded animations that can then be played on a timing loop later.
+  // Sometimes this lead to better performance to pre-record a single spring
+  // curve and use it to drive many animations; however, it can make dynamic
+  // response to user input a bit trickier to implement.
+  rebound.SimulationLooper = function SimulationLooper(timestep) {
+    this.springSystem = null;
+    var time = 0;
+    var running = false;
+    timestep = timestep || 16.667;
+
+    this.run = function () {
+      if (running) {
+        return;
+      }
+      running = true;
+      while (!this.springSystem.getIsIdle()) {
+        this.springSystem.loop(time += timestep);
+      }
+      running = false;
+    };
+  };
+
+  // **SteppingSimulationLooper** resolves the SpringSystem one step at a
+  // time controlled by an outside loop. This is useful for testing and
+  // verifying the behavior of a SpringSystem or if you want to control your own
+  // timing loop for some reason e.g. slowing down or speeding up the
+  // simulation.
+  rebound.SteppingSimulationLooper = function (timestep) {
+    this.springSystem = null;
+    var time = 0;
+
+    // this.run is NOOP'd here to allow control from the outside using
+    // this.step.
+    this.run = function () {};
+
+    // Perform one step toward resolving the SpringSystem.
+    this.step = function (timestep) {
+      this.springSystem.loop(time += timestep);
+    };
+  };
+
+  // Math for converting from
+  // [Origami](http://facebook.github.io/origami/) to
+  // [Rebound](http://facebook.github.io/rebound).
+  // You mostly don't need to worry about this, just use
+  // SpringConfig.fromOrigamiTensionAndFriction(v, v);
+  var OrigamiValueConverter = rebound.OrigamiValueConverter = {
+    tensionFromOrigamiValue: function tensionFromOrigamiValue(oValue) {
+      return (oValue - 30.0) * 3.62 + 194.0;
+    },
+
+    origamiValueFromTension: function origamiValueFromTension(tension) {
+      return (tension - 194.0) / 3.62 + 30.0;
+    },
+
+    frictionFromOrigamiValue: function frictionFromOrigamiValue(oValue) {
+      return (oValue - 8.0) * 3.0 + 25.0;
+    },
+
+    origamiFromFriction: function origamiFromFriction(friction) {
+      return (friction - 25.0) / 3.0 + 8.0;
+    }
+  };
+
+  // BouncyConversion provides math for converting from Origami PopAnimation
+  // config values to regular Origami tension and friction values. If you are
+  // trying to replicate prototypes made with PopAnimation patches in Origami,
+  // then you should create your springs with
+  // SpringSystem.createSpringWithBouncinessAndSpeed, which uses this Math
+  // internally to create a spring to match the provided PopAnimation
+  // configuration from Origami.
+  var BouncyConversion = rebound.BouncyConversion = function (bounciness, speed) {
+    this.bounciness = bounciness;
+    this.speed = speed;
+    var b = this.normalize(bounciness / 1.7, 0, 20.0);
+    b = this.projectNormal(b, 0.0, 0.8);
+    var s = this.normalize(speed / 1.7, 0, 20.0);
+    this.bouncyTension = this.projectNormal(s, 0.5, 200);
+    this.bouncyFriction = this.quadraticOutInterpolation(b, this.b3Nobounce(this.bouncyTension), 0.01);
+  };
+
+  util.extend(BouncyConversion.prototype, {
+
+    normalize: function normalize(value, startValue, endValue) {
+      return (value - startValue) / (endValue - startValue);
+    },
+
+    projectNormal: function projectNormal(n, start, end) {
+      return start + n * (end - start);
+    },
+
+    linearInterpolation: function linearInterpolation(t, start, end) {
+      return t * end + (1.0 - t) * start;
+    },
+
+    quadraticOutInterpolation: function quadraticOutInterpolation(t, start, end) {
+      return this.linearInterpolation(2 * t - t * t, start, end);
+    },
+
+    b3Friction1: function b3Friction1(x) {
+      return 0.0007 * Math.pow(x, 3) - 0.031 * Math.pow(x, 2) + 0.64 * x + 1.28;
+    },
+
+    b3Friction2: function b3Friction2(x) {
+      return 0.000044 * Math.pow(x, 3) - 0.006 * Math.pow(x, 2) + 0.36 * x + 2.;
+    },
+
+    b3Friction3: function b3Friction3(x) {
+      return 0.00000045 * Math.pow(x, 3) - 0.000332 * Math.pow(x, 2) + 0.1078 * x + 5.84;
+    },
+
+    b3Nobounce: function b3Nobounce(tension) {
+      var friction = 0;
+      if (tension <= 18) {
+        friction = this.b3Friction1(tension);
+      } else if (tension > 18 && tension <= 44) {
+        friction = this.b3Friction2(tension);
+      } else {
+        friction = this.b3Friction3(tension);
+      }
+      return friction;
+    }
+  });
+
+  util.extend(SpringConfig, {
+    // Convert an origami Spring tension and friction to Rebound spring
+    // constants. If you are prototyping a design with Origami, this
+    // makes it easy to make your springs behave exactly the same in
+    // Rebound.
+    fromOrigamiTensionAndFriction: function fromOrigamiTensionAndFriction(tension, friction) {
+      return new SpringConfig(OrigamiValueConverter.tensionFromOrigamiValue(tension), OrigamiValueConverter.frictionFromOrigamiValue(friction));
+    },
+
+    // Convert an origami PopAnimation Spring bounciness and speed to Rebound
+    // spring constants. If you are using PopAnimation patches in Origami, this
+    // utility will provide springs that match your prototype.
+    fromBouncinessAndSpeed: function fromBouncinessAndSpeed(bounciness, speed) {
+      var bouncyConversion = new rebound.BouncyConversion(bounciness, speed);
+      return this.fromOrigamiTensionAndFriction(bouncyConversion.bouncyTension, bouncyConversion.bouncyFriction);
+    },
+
+    // Create a SpringConfig with no tension or a coasting spring with some
+    // amount of Friction so that it does not coast infininitely.
+    coastingConfigWithOrigamiFriction: function coastingConfigWithOrigamiFriction(friction) {
+      return new SpringConfig(0, OrigamiValueConverter.frictionFromOrigamiValue(friction));
+    }
+  });
+
+  SpringConfig.DEFAULT_ORIGAMI_SPRING_CONFIG = SpringConfig.fromOrigamiTensionAndFriction(40, 7);
+
+  util.extend(SpringConfig.prototype, { friction: 0, tension: 0 });
+
+  // Here are a couple of function to convert colors between hex codes and RGB
+  // component values. These are handy when performing color
+  // tweening animations.
+  var colorCache = {};
+  util.hexToRGB = function (color) {
+    if (colorCache[color]) {
+      return colorCache[color];
+    }
+    color = color.replace('#', '');
+    if (color.length === 3) {
+      color = color[0] + color[0] + color[1] + color[1] + color[2] + color[2];
+    }
+    var parts = color.match(/.{2}/g);
+
+    var ret = {
+      r: parseInt(parts[0], 16),
+      g: parseInt(parts[1], 16),
+      b: parseInt(parts[2], 16)
+    };
+
+    colorCache[color] = ret;
+    return ret;
+  };
+
+  util.rgbToHex = function (r, g, b) {
+    r = r.toString(16);
+    g = g.toString(16);
+    b = b.toString(16);
+    r = r.length < 2 ? '0' + r : r;
+    g = g.length < 2 ? '0' + g : g;
+    b = b.length < 2 ? '0' + b : b;
+    return '#' + r + g + b;
+  };
+
+  var MathUtil = rebound.MathUtil = {
+    // This helper function does a linear interpolation of a value from
+    // one range to another. This can be very useful for converting the
+    // motion of a Spring to a range of UI property values. For example a
+    // spring moving from position 0 to 1 could be interpolated to move a
+    // view from pixel 300 to 350 and scale it from 0.5 to 1. The current
+    // position of the `Spring` just needs to be run through this method
+    // taking its input range in the _from_ parameters with the property
+    // animation range in the _to_ parameters.
+    mapValueInRange: function mapValueInRange(value, fromLow, fromHigh, toLow, toHigh) {
+      var fromRangeSize = fromHigh - fromLow;
+      var toRangeSize = toHigh - toLow;
+      var valueScale = (value - fromLow) / fromRangeSize;
+      return toLow + valueScale * toRangeSize;
+    },
+
+    // Interpolate two hex colors in a 0 - 1 range or optionally provide a
+    // custom range with fromLow,fromHight. The output will be in hex by default
+    // unless asRGB is true in which case it will be returned as an rgb string.
+    interpolateColor: function interpolateColor(val, startColor, endColor, fromLow, fromHigh, asRGB) {
+      fromLow = fromLow === undefined ? 0 : fromLow;
+      fromHigh = fromHigh === undefined ? 1 : fromHigh;
+      startColor = util.hexToRGB(startColor);
+      endColor = util.hexToRGB(endColor);
+      var r = Math.floor(util.mapValueInRange(val, fromLow, fromHigh, startColor.r, endColor.r));
+      var g = Math.floor(util.mapValueInRange(val, fromLow, fromHigh, startColor.g, endColor.g));
+      var b = Math.floor(util.mapValueInRange(val, fromLow, fromHigh, startColor.b, endColor.b));
+      if (asRGB) {
+        return 'rgb(' + r + ',' + g + ',' + b + ')';
+      } else {
+        return util.rgbToHex(r, g, b);
+      }
+    },
+
+    degreesToRadians: function degreesToRadians(deg) {
+      return deg * Math.PI / 180;
+    },
+
+    radiansToDegrees: function radiansToDegrees(rad) {
+      return rad * 180 / Math.PI;
+    }
+
+  };
+
+  util.extend(util, MathUtil);
+
+  // Utilities
+  // ---------
+  // Here are a few useful JavaScript utilities.
+
+  // Lop off the first occurence of the reference in the Array.
+  function removeFirst(array, item) {
+    var idx = array.indexOf(item);
+    idx != -1 && array.splice(idx, 1);
+  }
+
+  var _onFrame;
+  if (typeof window !== 'undefined') {
+    _onFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame || window.oRequestAnimationFrame || function (callback) {
+      window.setTimeout(callback, 1000 / 60);
+    };
+  }
+  if (!_onFrame && typeof process !== 'undefined' && process.title === 'node') {
+    _onFrame = setImmediate;
+  }
+
+  // Cross browser/node timer functions.
+  util.onFrame = function onFrame(func) {
+    return _onFrame(func);
+  };
+
+  // Export the public api using exports for common js or the window for
+  // normal browser inclusion.
+  if (typeof exports != 'undefined') {
+    util.extend(exports, rebound);
+  } else if (typeof window != 'undefined') {
+    window.rebound = rebound;
+  }
+})();
+'use strict';
+
+/**
+ * Polygon.
+ * Create a regular polygon and provide api to compute inscribed child.
+ */
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Polygon = function () {
+  function Polygon() {
+    var radius = arguments.length <= 0 || arguments[0] === undefined ? 100 : arguments[0];
+    var sides = arguments.length <= 1 || arguments[1] === undefined ? 3 : arguments[1];
+    var depth = arguments.length <= 2 || arguments[2] === undefined ? 0 : arguments[2];
+    var colors = arguments[3];
+
+    _classCallCheck(this, Polygon);
+
+    this._radius = radius;
+    this._sides = sides;
+    this._depth = depth;
+    this._colors = colors;
+
+    this._x = 0;
+    this._y = 0;
+
+    this.rotation = 0;
+    this.scale = 1;
+
+    // Get basePolygon points straight away.
+    this.points = this._getRegularPolygonPoints();
+  }
+
+  /**
+   * Get the points of any regular polygon based on
+   * the number of sides and radius.
+   */
+
+
+  _createClass(Polygon, [{
+    key: '_getRegularPolygonPoints',
+    value: function _getRegularPolygonPoints() {
+
+      var points = [];
+
+      var i = 0;
+
+      while (i < this._sides) {
+        // Note that sin and cos are inverted in order to draw
+        // polygon pointing down like: ∇
+        var x = -this._radius * Math.sin(i * 2 * Math.PI / this._sides);
+        var y = this._radius * Math.cos(i * 2 * Math.PI / this._sides);
+
+        points.push({ x: x, y: y });
+
+        i++;
+      }
+
+      return points;
+    }
+
+    /**
+     * Get the inscribed polygon points by calling `getInterpolatedPoint`
+     * for the points (start, end) of each side.
+     */
+
+  }, {
+    key: '_getInscribedPoints',
+    value: function _getInscribedPoints(points, progress) {
+      var _this = this;
+
+      var inscribedPoints = [];
+
+      points.forEach(function (item, i) {
+
+        var start = item;
+        var end = points[i + 1];
+
+        if (!end) {
+          end = points[0];
+        }
+
+        var point = _this._getInterpolatedPoint(start, end, progress);
+
+        inscribedPoints.push(point);
+      });
+
+      return inscribedPoints;
+    }
+
+    /**
+     * Get interpolated point using linear interpolation
+     * on x and y axis.
+     */
+
+  }, {
+    key: '_getInterpolatedPoint',
+    value: function _getInterpolatedPoint(start, end, progress) {
+
+      var Ax = start.x;
+      var Ay = start.y;
+
+      var Bx = end.x;
+      var By = end.y;
+
+      // Linear interpolation formula:
+      // point = start + (end - start) * progress;
+      var Cx = Ax + (Bx - Ax) * progress;
+      var Cy = Ay + (By - Ay) * progress;
+
+      return {
+        x: Cx,
+        y: Cy
+      };
+    }
+
+    /**
+     * Update children points array.
+     */
+
+  }, {
+    key: '_getUpdatedChildren',
+    value: function _getUpdatedChildren(progress) {
+
+      var children = [];
+
+      for (var i = 0; i < this._depth; i++) {
+
+        // Get basePolygon points on first lap
+        // then get previous child points.
+        var points = children[i - 1] || this.points;
+
+        var inscribedPoints = this._getInscribedPoints(points, progress);
+
+        children.push(inscribedPoints);
+      }
+
+      return children;
+    }
+
+    /**
+     * Render children, first update children array,
+     * then loop and draw each child.
+     */
+
+  }, {
+    key: 'renderChildren',
+    value: function renderChildren(context, progress) {
+      var _this2 = this;
+
+      var children = this._getUpdatedChildren(progress);
+
+      // child = array of points at a certain progress over the parent sides.
+      children.forEach(function (points, i) {
+
+        // Draw child.
+        context.beginPath();
+        points.forEach(function (point) {
+          return context.lineTo(point.x, point.y);
+        });
+        context.closePath();
+
+        // Set colors.
+        var strokeColor = _this2._colors.stroke;
+        var childColor = _this2._colors.child;
+
+        if (strokeColor) {
+          context.strokeStyle = strokeColor;
+          context.stroke();
+        }
+
+        if (childColor) {
+          var rgb = rebound.util.hexToRGB(childColor);
+
+          var alphaUnit = 1 / children.length;
+          var alpha = alphaUnit + alphaUnit * i;
+
+          var rgba = 'rgba(' + rgb.r + ', ' + rgb.g + ', ' + rgb.b + ', ' + alpha + ')';
+
+          context.fillStyle = rgba;
+
+          // Set Shadow.
+          context.shadowColor = 'rgba(0,0,0, 0.1)';
+          context.shadowBlur = 10;
+          context.shadowOffsetX = 0;
+          context.shadowOffsetY = 0;
+
+          context.fill();
+        }
+      });
+    }
+
+    /**
+     * Render.
+     */
+
+  }, {
+    key: 'render',
+    value: function render(context) {
+
+      context.save();
+
+      context.translate(this._x, this._y);
+
+      if (this.rotation !== 0) {
+        context.rotate(rebound.MathUtil.degreesToRadians(this.rotation));
+      }
+
+      if (this.scale !== 1) {
+        context.scale(this.scale, this.scale);
+      }
+
+      // Draw basePolygon.
+      context.beginPath();
+      this.points.forEach(function (point) {
+        return context.lineTo(point.x, point.y);
+      });
+      context.closePath();
+
+      // Set colors.
+      var strokeColor = this._colors.stroke;
+      var childColor = this._colors.base;
+
+      if (strokeColor) {
+        context.strokeStyle = strokeColor;
+        context.stroke();
+      }
+
+      if (childColor) {
+        context.fillStyle = childColor;
+        context.fill();
+      }
+
+      context.restore();
+    }
+  }]);
+
+  return Polygon;
+}();
+'use strict';
+
+/**
+ * Spinner.
+ * Create a canvas element, append it to the body, render polygon with
+ * inscribed children, provide init and complete methods to control spinner.
+ */
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Spinner = function () {
+  function Spinner(params) {
+    _classCallCheck(this, Spinner);
+
+    var id = params.id,
+        radius = params.radius,
+        sides = params.sides,
+        depth = params.depth,
+        colors = params.colors,
+        alwaysForward = params.alwaysForward,
+        restAt = params.restAt,
+        renderBase = params.renderBase;
+
+    if (sides < 3) {
+      console.warn('At least 3 sides required.');
+      sides = 3;
+    }
+
+    this._canvas = document.createElement('canvas');
+    this._canvas.style.backgroundColor = colors.background;
+
+    this._canvasW = null;
+    this._canvasH = null;
+    this._canvasOpacity = 1;
+
+    this._centerX = null;
+    this._centerY = null;
+
+    this._alwaysForward = alwaysForward;
+    this._restThreshold = restAt;
+    this._renderBase = renderBase;
+
+    this._springRangeLow = 0;
+    this._springRangeHigh = this._restThreshold || 1;
+
+    // Instantiate basePolygon.
+    this._basePolygon = new Polygon(radius, sides, depth, colors);
+
+    this._progress = 0;
+
+    this._isAutoSpin = null;
+    this._isCompleting = null;
+  }
+
+  /**
+   * Init spinner.
+   */
+
+
+  _createClass(Spinner, [{
+    key: 'init',
+    value: function init(spring, autoSpin) {
+
+      this._addCanvas();
+
+      this._spring = spring;
+      this._addSpringListener();
+
+      this._isAutoSpin = autoSpin;
+
+      if (autoSpin) {
+        // Start auto spin.
+        this._spin();
+      } else {
+        // Render first frame only.
+        this._spring.setEndValue(0);
+        this.render();
+      }
+    }
+  }, {
+    key: '_addCanvas',
+    value: function _addCanvas() {
+      document.body.appendChild(this._canvas);
+      this._context = this._canvas.getContext('2d');
+      this._setCanvasSize();
+    }
+  }, {
+    key: '_setCanvasSize',
+    value: function _setCanvasSize() {
+      this._canvasW = this._canvas.width = window.innerWidth;
+      this._canvasH = this._canvas.height = window.innerHeight;
+
+      this._canvas.style.position = 'fixed';
+      this._canvas.style.top = 0;
+      this._canvas.style.left = 0;
+
+      this._centerX = this._canvasW / 2;
+      this._centerY = this._canvasH / 2;
+    }
+  }, {
+    key: '_addSpringListener',
+    value: function _addSpringListener() {
+
+      var ctx = this;
+
+      // Add a listener to the spring. Every time the physics
+      // solver updates the Spring's value onSpringUpdate will
+      // be called.
+      this._spring.addListener({
+        onSpringUpdate: function onSpringUpdate(spring) {
+
+          var val = spring.getCurrentValue();
+
+          // Input range in the `from` parameters.
+          var fromLow = 0,
+              fromHigh = 1,
+
+          // Property animation range in the `to` parameters.
+          toLow = ctx._springRangeLow,
+              toHigh = ctx._springRangeHigh;
+
+          val = rebound.MathUtil.mapValueInRange(val, fromLow, fromHigh, toLow, toHigh);
+
+          // Note that the render method is
+          // called with the spring motion value.
+          ctx.render(val);
+        }
+      });
+    }
+
+    /**
+     * Start complete animation.
+     */
+
+  }, {
+    key: 'setComplete',
+    value: function setComplete() {
+      this._isCompleting = true;
+    }
+  }, {
+    key: '_completeAnimation',
+    value: function _completeAnimation() {
+
+      // Fade out the canvas.
+      this._canvasOpacity -= 0.1;
+      this._canvas.style.opacity = this._canvasOpacity;
+
+      // Stop animation and remove canvas.
+      if (this._canvasOpacity <= 0) {
+        this._isAutoSpin = false;
+        this._spring.setAtRest();
+        this._canvas.remove();
+      }
+    }
+
+    /**
+     * Spin animation.
+     */
+
+  }, {
+    key: '_spin',
+    value: function _spin() {
+
+      if (this._alwaysForward) {
+
+        var currentValue = this._spring.getCurrentValue();
+
+        // Switch the animation range used to compute the value
+        // in the `onSpringUpdate`, so to change the reverse animation
+        // of the spring at a certain threshold.
+        if (this._restThreshold && currentValue === 1) {
+          this._switchSpringRange();
+        }
+
+        // In order to keep the motion going forward
+        // when spring reach 1 reset to 0 at rest.
+        if (currentValue === 1) {
+          this._spring.setCurrentValue(0).setAtRest();
+        }
+      }
+
+      // Restart the spinner.
+      this._spring.setEndValue(this._spring.getCurrentValue() === 1 ? 0 : 1);
+    }
+  }, {
+    key: '_switchSpringRange',
+    value: function _switchSpringRange() {
+
+      var threshold = this._restThreshold;
+
+      this._springRangeLow = this._springRangeLow === threshold ? 0 : threshold;
+      this._springRangeHigh = this._springRangeHigh === threshold ? 1 : threshold;
+    }
+
+    /**
+     * Render.
+     */
+
+  }, {
+    key: 'render',
+    value: function render(progress) {
+
+      // Update progess if present and round to 4th decimal.
+      if (progress) {
+        this._progress = Math.round(progress * 10000) / 10000;
+      }
+
+      // Restart the spin.
+      if (this._isAutoSpin && this._spring.isAtRest()) {
+        this._spin();
+      }
+
+      // Complete the animation.
+      if (this._isCompleting) {
+        this._completeAnimation();
+      }
+
+      // Clear canvas and save context.
+      this._context.clearRect(0, 0, this._canvasW, this._canvasH);
+      this._context.save();
+
+      // Move to center.
+      this._context.translate(this._centerX, this._centerY);
+
+      this._context.lineWidth = 1.5;
+
+      // Render basePolygon.
+      if (this._renderBase) {
+        this._basePolygon.render(this._context);
+      }
+
+      // Render inscribed polygons.
+      this._basePolygon.renderChildren(this._context, this._progress);
+
+      this._context.restore();
+    }
+  }]);
+
+  return Spinner;
+}();
+'use strict';
+
+// Custom SETTINGS for each demo in related index.html
+
+var settings = SETTINGS || {
+  rebound: {
+    tension: 2,
+    friction: 5
+  },
+  spinner: {
+    radius: 80,
+    sides: 3,
+    depth: 4,
+    colors: {
+      background: '#000000',
+      stroke: '#000000',
+      base: '#222222',
+      child: '#FFFFFF'
+    },
+    alwaysForward: true, // When false the spring will reverse normally.
+    restAt: 0.5, // A number from 0.1 to 0.9 || null for full rotation
+    renderBase: true // Optionally render basePolygon
+  }
+};
+
+/**
+ * Demo.
+ */
+var demo = {
+  settings: settings,
+  spring: null,
+  spinner: null,
+
+  /**
+   * Initialize Rebound.js with settings.
+   * Rebound is used to generate a spring which
+   * is then used to animate the spinner.
+   * See more: http://facebook.github.io/rebound-js/docs/rebound.html
+   */
+  initRebound: function initRebound() {
+
+    var settings = demo.settings.rebound;
+
+    // Create a SpringSystem.
+    var springSystem = new rebound.SpringSystem();
+
+    // Add a spring to the system.
+    demo.spring = springSystem.createSpring(settings.tension, settings.friction);
+  },
+
+
+  /**
+   * Initialize Spinner with settings.
+   */
+  initSpinner: function initSpinner() {
+
+    var settings = demo.settings.spinner;
+
+    // Instantiate Spinner.
+    demo.spinner = new Spinner(settings);
+  },
+
+
+  /**
+   * Initialize demo.
+   */
+  init: function init() {
+
+    var spinnerTypeAutoSpin = true;
+
+    // Instantiate animation engine and spinner system.
+    demo.initRebound();
+    demo.initSpinner();
+
+    // Init animation with Rebound Spring System.
+    demo.spinner.init(demo.spring, spinnerTypeAutoSpin);
+
+    if (spinnerTypeAutoSpin) {
+      // Fake loading time, in a real world just call demo.spinner.setComplete();
+      // whenever the preload will be completed.
+      //change the load time
+      setTimeout(function () {
+        demo.spinner.setComplete();
+      }, 12000);
+    } else {
+      // Perform real ajax request.
+      demo.loadSomething();
+    }
+  },
+
+
+  /**
+   * Ajax Request.
+   */
+  loadSomething: function loadSomething() {
+
+    var oReq = new XMLHttpRequest();
+
+    oReq.addEventListener('progress', function (oEvent) {
+      if (oEvent.lengthComputable) {
+
+        var percent = Math.ceil(oEvent.loaded / oEvent.total * 100);
+        console.log('ajax loding percent', percent);
+
+        // By setting the end value with the actual loading percentage
+        // the spinner will progress based on the actual ajax loading time.
+        demo.spring.setEndValue(percent * 0.01);
+      }
+    });
+
+    oReq.addEventListener('load', function (e) {
+      // Complete the loading animation.
+      demo.spinner.setComplete();
+    });
+
+    oReq.open('GET', '/img/something.jpg');
+    oReq.send();
+  }
+};
+
+
+index.js
+
+const menubox = document.querySelector('.menubox');
+const menulabel = menubox.querySelector('.menubox__label');
+const menuchecks = menubox.querySelectorAll('input[type=checkbox]');
+const menuboxRect = menubox.getBoundingClientRect();
+const menulabelRect = menulabel.getBoundingClientRect();
+const frameTime = 1000 / 60;
+const duration = 350;
+const frames = Math.ceil(duration / frameTime);
+const slideHeight = menuboxRect.height - menulabelRect.height;
+let timer = null;
+let currentItem = 0;
+const debouncedFn = (fn) => {
+  timer && clearTimeout(timer);
+  timer = setTimeout(fn, 250);
+}
+const documentAnimateHeight = (e) => {
+  if (e.target === menubox || menubox.contains(e.target)) {
+    e.stopPropagation();
+    return;
+  }
+  
+  debouncedFn(() => {
+    animateHeight(true);
+  });
+};
+document.addEventListener('click', documentAnimateHeight);
+function animateHeight (collapsing, done) {
+  let i = 0;
+  
+  function __animate () {
+    // const scale = (collapsing ? frames - (i++) : i++) / frames;
+    // const height = menulabelRect.height + (scale * slideHeight);
+    
+    const factor = Math.pow((i++) / frames - 1, 3) + 1;
+    const height = 2 + menulabelRect.height + (collapsing ? 1 - factor : factor) * slideHeight;
+
+    menubox.style.maxHeight = `${height}px`;
+
+    if (i <= frames) {
+      requestAnimationFrame(__animate);
+    } else {
+      if (collapsing) {
+        const transitionEnded = () => {
+          menubox.removeEventListener('transitionend', transitionEnded);
+          document.removeEventListener('click', documentAnimateHeight);
+
+          (typeof done === 'function') && done();
+        }
+
+        menubox.classList.add('menubox--collapsed');
+        menubox.addEventListener('transitionend', transitionEnded, false);
+      } else {
+        menuchecks.item(currentItem = currentItem || 0).focus();
+        (typeof done === 'function') && done();
+      }
+      
+      timer && clearTimeout(timer);
+      timer = null;
+    }
+  }
+  if (collapsing) {
+    requestAnimationFrame(__animate);
+  } else {
+    const transitionEnded = () => {
+      menubox.removeEventListener('transitionend', transitionEnded);
+      requestAnimationFrame(__animate);
+    }
+    
+    menubox.classList.remove('menubox--collapsed');
+    menubox.addEventListener('transitionend', transitionEnded, false);
+      
+    document.addEventListener('click', documentAnimateHeight);
+  }
+}
+menulabel.addEventListener('click', () => {
+  debouncedFn(() => {
+    animateHeight(!menubox.classList.contains('menubox--collapsed'));
+  });
+});
+
+
+index1.js
+
+const menubox1 = document.querySelector('.menubox1');
+const menulabel1 = menubox1.querySelector('.menubox__label1');
+const menuchecks1 = menubox1.querySelectorAll('input[type=checkbox]');
+const menuboxRect1 = menubox1.getBoundingClientRect();
+const menulabelRect1 = menulabel.getBoundingClientRect();
+const frameTime1 = 1000 / 60;
+const duration1 = 350;
+const frames1 = Math.ceil(duration1 / frameTime1);
+const slideHeight1 = menuboxRect1.height - menulabelRect1.height;
+let timer1 = null;
+let currentItem1 = 0;
+const debouncedFn1 = (fn) => {
+  timer1 && clearTimeout(timer1);
+  timer1 = setTimeout(fn, 250);
+}
+const documentanimateHeight11 = (e) => {
+  if (e.target === menubox1 || menubox1.contains(e.target)) {
+    e.stopPropagation();
+    return;
+  }
+  
+  debouncedFn1(() => {
+    animateHeight1(true);
+  });
+};
+document.addEventListener('click', documentanimateHeight11);
+function animateHeight1 (collapsing, done) {
+  let i = 0;
+  
+  function __animate1 () {
+    // const scale = (collapsing ? frames1 - (i++) : i++) / frames1;
+    // const height = menulabelRect1.height + (scale * slideHeight1);
+    
+    const factor = Math.pow((i++) / frames1 - 1, 3) + 1;
+    const height = 2 + menulabelRect1.height + (collapsing ? 1 - factor : factor) * slideHeight1;
+
+    menubox1.style.maxHeight = `${height}px`;
+
+    if (i <= frames1) {
+      requestAnimationFrame(__animate1);
+    } else {
+      if (collapsing) {
+        const transitionEnded = () => {
+          menubox1.removeEventListener('transitionend', transitionEnded);
+          document.removeEventListener('click', documentanimateHeight11);
+
+          (typeof done === 'function') && done();
+        }
+
+        menubox1.classList.add('menubox--collapsed');
+        menubox1.addEventListener('transitionend', transitionEnded, false);
+      } else {
+        menuchecks1.item(currentItem1 = currentItem1 || 0).focus();
+        (typeof done === 'function') && done();
+      }
+      
+      timer1 && clearTimeout(timer1);
+      timer1 = null;
+    }
+  }
+  if (collapsing) {
+    requestAnimationFrame(__animate1);
+  } else {
+    const transitionEnded = () => {
+      menubox1.removeEventListener('transitionend', transitionEnded);
+      requestAnimationFrame(__animate1);
+    }
+    
+    menubox1.classList.remove('menubox--collapsed');
+    menubox1.addEventListener('transitionend', transitionEnded, false);
+      
+    document.addEventListener('click', documentanimateHeight11);
+  }
+}
+menulabel1.addEventListener('click', () => {
+  debouncedFn1(() => {
+    animateHeight1(!menubox1.classList.contains('menubox--collapsed'));
+  });
+});
+
+
+index2.js
+
+const menubox2 = document.querySelector('.menubox2');
+const menulabel2 = menubox2.querySelector('.menubox__label2');
+const menuchecks2 = menubox2.querySelectorAll('input[type=checkbox]');
+const menuboxRect2 = menubox2.getBoundingClientRect();
+const menulabelRect2 = menulabel2.getBoundingClientRect();
+const frameTime2 = 1000 / 60;
+const duration2 = 350;
+const frames2 = Math.ceil(duration2 / frameTime2);
+const slideHeight2 = menuboxRect2.height - menulabelRect2.height;
+let timer2 = null;
+let currentItem2 = 0;
+const debouncedFn2 = (fn) => {
+  timer2 && clearTimeout(timer2);
+  timer2 = setTimeout(fn, 250);
+}
+const documentanimateHeight22 = (e) => {
+  if (e.target === menubox2 || menubox2.contains(e.target)) {
+    e.stopPropagation();
+    return;
+  }
+  
+  debouncedFn2(() => {
+    animateHeight2(true);
+  });
+};
+document.addEventListener('click', documentanimateHeight22);
+function animateHeight2 (collapsing, done) {
+  let i = 0;
+  
+  function __animate2 () {
+    // const scale = (collapsing ? frames2 - (i++) : i++) / frames2;
+    // const height = menulabelRect2.height + (scale * slideHeight2);
+    
+    const factor = Math.pow((i++) / frames2 - 1, 3) + 1;
+    const height = 2 + menulabelRect2.height + (collapsing ? 1 - factor : factor) * slideHeight2;
+
+    menubox2.style.maxHeight = `${height}px`;
+
+    if (i <= frames2) {
+      requestAnimationFrame(__animate2);
+    } else {
+      if (collapsing) {
+        const transitionEnded = () => {
+          menubox2.removeEventListener('transitionend', transitionEnded);
+          document.removeEventListener('click', documentanimateHeight22);
+
+          (typeof done === 'function') && done();
+        }
+
+        menubox2.classList.add('menubox--collapsed');
+        menubox2.addEventListener('transitionend', transitionEnded, false);
+      } else {
+        menuchecks2.item(currentItem2 = currentItem2 || 0).focus();
+        (typeof done === 'function') && done();
+      }
+      
+      timer2 && clearTimeout(timer2);
+      timer2 = null;
+    }
+  }
+  if (collapsing) {
+    requestAnimationFrame(__animate2);
+  } else {
+    const transitionEnded = () => {
+      menubox2.removeEventListener('transitionend', transitionEnded);
+      requestAnimationFrame(__animate2);
+    }
+    
+    menubox2.classList.remove('menubox--collapsed');
+    menubox2.addEventListener('transitionend', transitionEnded, false);
+      
+    document.addEventListener('click', documentanimateHeight22);
+  }
+}
+menulabel2.addEventListener('click', () => {
+  debouncedFn2(() => {
+    animateHeight2(!menubox2.classList.contains('menubox--collapsed'));
+  });
+});
+
+
+index3.js
+
+const menubox3 = document.querySelector('.menubox3');
+const menulabel3 = menubox3.querySelector('.menubox__label3');
+const menuchecks3 = menubox3.querySelectorAll('input[type=checkbox]');
+const menuboxRect3 = menubox3.getBoundingClientRect();
+const menulabelRect3 = menulabel.getBoundingClientRect();
+const frameTime3 = 3000 / 60;
+const duration3 = 350;
+const frames3 = Math.ceil(duration3 / frameTime3);
+const slideHeight3 = menuboxRect3.height - menulabelRect3.height;
+let timer3 = null;
+let currentItem3 = 0;
+const debouncedFn3 = (fn) => {
+  timer3 && clearTimeout(timer3);
+  timer3 = setTimeout(fn, 250);
+}
+const documentanimateHeight33 = (e) => {
+  if (e.target === menubox3 || menubox3.contains(e.target)) {
+    e.stopPropagation();
+    return;
+  }
+  
+  debouncedFn3(() => {
+    animateHeight3(true);
+  });
+};
+document.addEventListener('click', documentanimateHeight33);
+function animateHeight3 (collapsing, done) {
+  let i = 0;
+  
+  function __animate3 () {
+    // const scale = (collapsing ? frames3 - (i++) : i++) / frames3;
+    // const height = menulabelRect3.height + (scale * slideHeight3);
+    
+    const factor = Math.pow((i++) / frames3 - 1, 3) + 1;
+    const height = 2 + menulabelRect3.height + (collapsing ? 1 - factor : factor) * slideHeight3;
+
+    menubox3.style.maxHeight = `${height}px`;
+
+    if (i <= frames3) {
+      requestAnimationFrame(__animate3);
+    } else {
+      if (collapsing) {
+        const transitionEnded = () => {
+          menubox3.removeEventListener('transitionend', transitionEnded);
+          document.removeEventListener('click', documentanimateHeight33);
+
+          (typeof done === 'function') && done();
+        }
+
+        menubox3.classList.add('menubox--collapsed');
+        menubox3.addEventListener('transitionend', transitionEnded, false);
+      } else {
+        menuchecks3.item(currentItem3 = currentItem3 || 0).focus();
+        (typeof done === 'function') && done();
+      }
+      
+      timer3 && clearTimeout(timer3);
+      timer3 = null;
+    }
+  }
+  if (collapsing) {
+    requestAnimationFrame(__animate3);
+  } else {
+    const transitionEnded = () => {
+      menubox3.removeEventListener('transitionend', transitionEnded);
+      requestAnimationFrame(__animate3);
+    }
+    
+    menubox3.classList.remove('menubox--collapsed');
+    menubox3.addEventListener('transitionend', transitionEnded, false);
+      
+    document.addEventListener('click', documentanimateHeight33);
+  }
+}
+menulabel3.addEventListener('click', () => {
+  debouncedFn3(() => {
+    animateHeight3(!menubox3.classList.contains('menubox--collapsed'));
+  });
+});
+
+
+index4.js
+
+const menubox4 = document.querySelector('.menubox4');
+const menulabel4 = menubox4.querySelector('.menubox__label4');
+const menuchecks4 = menubox4.querySelectorAll('input[type=checkbox]');
+const menuboxRect4 = menubox4.getBoundingClientRect();
+const menulabelRect4 = menulabel4.getBoundingClientRect();
+const frameTime4 = 3000 / 60;
+const duration4 = 350;
+const frames4 = Math.ceil(duration4 / frameTime4);
+const slideHeight4 = menuboxRect4.height - menulabelRect4.height;
+let timer4 = null;
+let currentItem4 = 0;
+const debouncedFn4 = (fn) => {
+  timer4 && clearTimeout(timer4);
+  timer4 = setTimeout(fn, 250);
+}
+const documentanimateHeight44 = (e) => {
+  if (e.target === menubox4 || menubox4.contains(e.target)) {
+    e.stopPropagation();
+    return;
+  }
+
+  debouncedFn4(() => {
+    animateHeight4(true);
+  });
+};
+document.addEventListener('click', documentanimateHeight44);
+function animateHeight4 (collapsing, done) {
+  let i = 0;
+
+  function __animate4 () {
+    // const scale = (collapsing ? frames4 - (i++) : i++) / frames4;
+    // const height = menulabelRect4.height + (scale * slideHeight4);
+
+    const factor = Math.pow((i++) / frames4 - 1, 3) + 1;
+    const height = 2 + menulabelRect4.height + (collapsing ? 1 - factor : factor) * slideHeight4;
+
+    menubox4.style.maxHeight = `${height}px`;
+
+    if (i <= frames4) {
+      requestAnimationFrame(__animate4);
+    } else {
+      if (collapsing) {
+        const transitionEnded = () => {
+          menubox4.removeEventListener('transitionend', transitionEnded);
+          document.removeEventListener('click', documentanimateHeight44);
+
+          (typeof done === 'function') && done();
+        }
+
+        menubox4.classList.add('menubox--collapsed');
+        menubox4.addEventListener('transitionend', transitionEnded, false);
+      } else {
+        menuchecks4.item(currentItem4 = currentItem4 || 0).focus();
+        (typeof done === 'function') && done();
+      }
+
+      timer4 && clearTimeout(timer4);
+      timer4 = null;
+    }
+  }
+  if (collapsing) {
+    requestAnimationFrame(__animate4);
+  } else {
+    const transitionEnded = () => {
+      menubox4.removeEventListener('transitionend', transitionEnded);
+      requestAnimationFrame(__animate4);
+    }
+
+    menubox4.classList.remove('menubox--collapsed');
+    menubox4.addEventListener('transitionend', transitionEnded, false);
+
+    document.addEventListener('click', documentanimateHeight44);
+  }
+}
+menulabel4.addEventListener('click', () => {
+  debouncedFn4(() => {
+    animateHeight4(!menubox4.classList.contains('menubox--collapsed'));
+  });
+});
+

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>3D Floorplan with Wood Texture</title>
+  <style>
+    body { margin: 0; overflow: hidden; background: #ffffff; }
+    #info {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      padding: 6px 10px;
+      background: rgba(255,255,255,0.8);
+      font-family: system-ui, sans-serif;
+      font-size: 12px;
+      z-index: 10;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+    }
+  </style>
+</head>
+<body>
+<div id="info">Drag = rotate · Wheel = zoom · Right drag = pan</div>
+<canvas id="c"></canvas>
+
+<script type="module">
+  import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
+  import { OrbitControls } from 'https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js';
+
+  // -------------------------------------------------
+  // 1. PASTE YOUR POLYGON DATA HERE (from Python)
+  //    Format: array of rooms, each is array of {x, y}
+  // -------------------------------------------------
+  const polygonData = [
+    // Example dummy room – REPLACE this array with your JSON from Python
+    // [
+    //   {"x":0, "y":0},
+    //   {"x":400, "y":0},
+    //   {"x":400, "y":300},
+    //   {"x":0, "y":300}
+    // ]
+  ];
+  // -------------------------------------------------
+
+  // If you forgot to paste data, bail out visibly
+  if (polygonData.length === 0) {
+    alert("Paste polygonData JSON from Python into the HTML file.");
+  }
+
+  const canvas = document.getElementById('c');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xffffff);
+
+  // Camera
+  const camera = new THREE.PerspectiveCamera(
+    45,
+    window.innerWidth / window.innerHeight,
+    1,
+    5000
+  );
+  camera.position.set(600, 500, 600); // angled view
+  camera.lookAt(0, 0, 0);
+
+  // Controls
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.target.set(0, 0, 0);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.08;
+
+  // Lights
+  const ambient = new THREE.AmbientLight(0xffffff, 0.65);
+  scene.add(ambient);
+
+  const dirLight = new THREE.DirectionalLight(0xffffff, 0.9);
+  dirLight.position.set(500, 800, 400);
+  dirLight.castShadow = true;
+  dirLight.shadow.mapSize.set(2048, 2048);
+  scene.add(dirLight);
+
+  // Ground shadow plane
+  const groundGeo = new THREE.PlaneGeometry(5000, 5000);
+  const groundMat = new THREE.ShadowMaterial({ opacity: 0.15 });
+  const ground = new THREE.Mesh(groundGeo, groundMat);
+  ground.rotation.x = -Math.PI / 2;
+  ground.position.y = -1;
+  ground.receiveShadow = true;
+  scene.add(ground);
+
+  // Load wood texture
+  const texLoader = new THREE.TextureLoader();
+  const woodTexture = texLoader.load("floor_wood.jpg");
+  woodTexture.wrapS = THREE.RepeatWrapping;
+  woodTexture.wrapT = THREE.RepeatWrapping;
+  woodTexture.anisotropy = 16;
+
+  // Materials
+  const floorMaterial = new THREE.MeshStandardMaterial({
+    map: woodTexture,
+    roughness: 0.6,
+    metalness: 0.0
+  });
+
+  const wallMaterial = new THREE.MeshStandardMaterial({
+    color: 0xffffff,
+    roughness: 0.8,
+    metalness: 0.0
+  });
+
+  const wallHeight = 80;     // Y up
+  const wallThickness = 10;  // thickness in world units
+
+  // Compute overall bounds for centering and texture scaling
+  let allX = [];
+  let allY = [];
+  polygonData.forEach(room => {
+    room.forEach(p => {
+      allX.push(p.x);
+      allY.push(p.y);
+    });
+  });
+  const minX = Math.min(...allX);
+  const maxX = Math.max(...allX);
+  const minY = Math.min(...allY);
+  const maxY = Math.max(...allY);
+  const centerX = (minX + maxX) / 2;
+  const centerY = (minY + maxY) / 2;
+
+  // Scale factor to bring plan into reasonable size (optional)
+  const scale = 1; // set to 0.5 or 2.0 if you need bigger/smaller model
+
+  // Adjust camera target to center
+  controls.target.set(0, 0, 0);
+
+  // Helper: convert 2D plan coords -> 3D (X,Z), Y up
+  function planTo3D(p) {
+    const x = (p.x - centerX) * scale;
+    const z = (p.y - centerY) * scale;
+    return new THREE.Vector3(x, 0, z);
+  }
+
+  // Build each room
+  polygonData.forEach(room => {
+    if (room.length < 3) return;
+
+    // Floor shape
+    const shape = new THREE.Shape();
+    room.forEach((p, idx) => {
+      const v = planTo3D(p);
+      if (idx === 0) shape.moveTo(v.x, v.z);
+      else shape.lineTo(v.x, v.z);
+    });
+    shape.closePath();
+
+    // Floor geometry (thin extrude as a "slab")
+    const floorGeom = new THREE.ExtrudeGeometry(shape, {
+      depth: 2,
+      bevelEnabled: false
+    });
+    // Orient extrude "depth" along Y
+    floorGeom.rotateX(-Math.PI / 2);
+
+    // Compute shape extents for texture tiling
+    const box = new THREE.Box3().setFromObject(new THREE.Mesh(floorGeom));
+    const size = new THREE.Vector3();
+    box.getSize(size);
+    // tile texture proportional to room size
+    woodTexture.repeat.set(size.x / 200, size.z / 200);
+
+    const floorMesh = new THREE.Mesh(floorGeom, floorMaterial);
+    floorMesh.receiveShadow = true;
+    floorMesh.castShadow = false;
+    scene.add(floorMesh);
+
+    // Walls along edges
+    const n = room.length;
+    for (let i = 0; i < n; i++) {
+      const j = (i + 1) % n;
+      const p1 = planTo3D(room[i]);
+      const p2 = planTo3D(room[j]);
+
+      const edgeVec = new THREE.Vector3().subVectors(p2, p1);
+      const length = edgeVec.length();
+      if (length < 1e-3) continue;
+
+      const mid = new THREE.Vector3().addVectors(p1, p2).multiplyScalar(0.5);
+
+      const wallGeom = new THREE.BoxGeometry(length, wallHeight, wallThickness);
+      const wallMesh = new THREE.Mesh(wallGeom, wallMaterial);
+      wallMesh.castShadow = true;
+      wallMesh.receiveShadow = true;
+
+      // orient wall along edge
+      const angle = Math.atan2(edgeVec.z, edgeVec.x);
+      wallMesh.rotation.y = -angle;
+      wallMesh.position.set(mid.x, wallHeight / 2, mid.z);
+
+      scene.add(wallMesh);
+    }
+  });
+
+  // Resize handling
+  function onWindowResize() {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
+  }
+  window.addEventListener('resize', onWindowResize);
+  onWindowResize();
+
+  // Render loop
+  function animate() {
+    requestAnimationFrame(animate);
+    controls.update();
+    renderer.render(scene, camera);
+  }
+  animate();
+
+</script>
+</body>
+</html>

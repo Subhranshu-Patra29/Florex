@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Floorplan Renderer</title>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #1e1e1e;
+            color: white;
+            margin: 0;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+        .main-container {
+            display: flex;
+            gap: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+        }
+        .left-panel {
+            flex: 0 0 400px;
+            background: #252525;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            height: fit-content;
+            position: sticky;
+            top: 30px;
+        }
+        .right-panel {
+            flex: 1;
+            min-width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            color: #e67e22;
+            text-align: center;
+            margin: 0 0 8px 0;
+            font-size: 28px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #aaa;
+            margin-bottom: 30px;
+            font-size: 15px;
+        }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #444;
+        }
+        .tab-button {
+            padding: 12px 24px;
+            background: #333;
+            color: #aaa;
+            border: none;
+            border-radius: 10px 10px 0 0;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .tab-button.active {
+            color: #e67e22;
+            background: #2c2c2c;
+            border-bottom: 3px solid #e67e22;
+        }
+        .tab-button:hover {
+            color: #fff;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .view-content {
+            display: none;
+        }
+        .view-content.active {
+            display: block;
+        }
+
+        /* LEGEND */
+        .legend {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            background: #2c2c2c;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 25px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 15px;
+            font-weight: 500;
+        }
+        .dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 3px solid rgba(255,255,255,0.3);
+            flex-shrink: 0;
+        }
+        .public   { background:#f5f2e2; }
+        .bedroom  { background:#fff39a; }
+        .bathroom { background:#bfecff; }
+        .balcony  { background:#d3d981; }
+        .kitchen  { background:#f4d7d1; }
+        .storage  { background:#ffdfb6; }
+
+        /* UPLOAD BOX */
+        .upload-box {
+            background: #333;
+            padding: 35px;
+            border-radius: 18px;
+            border: 3px dashed #bfecff;
+            text-align: center;
+        }
+        input[type="file"] {
+            font-size: 17px;
+            padding: 14px;
+            background: #444;
+            color: white;
+            border-radius: 10px;
+            width: 100%;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+
+
+        button {
+            padding: 16px 50px;
+            font-size: 19px;
+            background: #e67e22;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button:hover {
+            background: #bfecff;
+            color: #1e1e1e;
+        }
+
+        /* CANVAS CONTAINER */
+        .canvas-container {
+            position: relative;
+            display: block;
+            margin-top: 20px;
+            border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.7);
+            border: 4px solid #333;
+            overflow: hidden;
+            background: #1e1e1e;
+            width: 100%;
+        }
+        .canvas-container-3d {
+            width: 100%;
+            min-height: 600px;
+            height: calc(100vh - 200px);
+        }
+        .result-image {
+            max-width: 100%;
+            width: 100%;
+            border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.7);
+            border: 4px solid #333;
+            display: block;
+        }
+        /* Make Plotly div fill container */
+        .canvas-container-3d > div {
+            width: 100% !important;
+            height: 100% !important;
+        }
+        .canvas-container-3d #plotly-div {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        .back-link {
+            color: #bfecff;
+            font-size: 18px;
+            text-decoration: none;
+            font-weight: 500;
+            margin-top: 20px;
+        }
+        .back-link:hover { text-decoration: underline; }
+
+        .info-text {
+            color: #888;
+            font-size: 14px;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        @media (max-width: 1000px) {
+            .main-container { flex-direction: column; }
+            .left-panel { flex: none; position: static; }
+            .right-panel { min-width: auto; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <!-- LEFT PANEL: Controls -->
+    <div class="left-panel">
+        <h1>Floorplan Renderer</h1>
+        <p class="subtitle">Upload your .mat file to visualize</p>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-item"><span class="dot public"></span> Public Area</div>
+            <div class="legend-item"><span class="dot bedroom"></span> Bedroom</div>
+            <div class="legend-item"><span class="dot bathroom"></span> Bathroom</div>
+            <div class="legend-item"><span class="dot balcony"></span> Balcony</div>
+            <div class="legend-item"><span class="dot kitchen"></span> Kitchen</div>
+            <div class="legend-item"><span class="dot storage"></span> Storage</div>
+        </div>
+
+        <!-- Upload Form -->
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="upload-box">
+                <input type="file" name="mat_file" accept=".mat" required>
+                <button type="submit">Render Floorplan</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- RIGHT PANEL: Result -->
+    <div class="right-panel">
+        {% if rendered_image or plotly_html %}
+            <!-- View Tabs -->
+            <div class="tabs" style="margin-bottom: 20px;">
+                <button class="tab-button active" onclick="switchView('2d', event)">2D </button>
+                <button class="tab-button" onclick="switchView('3d', event)">3D </button>
+            </div>
+
+            <!-- 2D View -->
+            <div id="view-2d" class="view-content active">
+                {% if rendered_image %}
+                    <div class="canvas-container">
+                        <img src="{{ rendered_image }}" alt="Floorplan" class="result-image">
+                    </div>
+                {% else %}
+                    <div style="color:#888; font-size:16px; padding:40px; text-align:center;">
+                        2D floorplan not available
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- 3D View -->
+            <div id="view-3d" class="view-content">
+                {% if plotly_html %}
+                    <div class="canvas-container canvas-container-3d">
+                        {{ plotly_html|safe }}
+                    </div>
+                {% else %}
+                    <div style="color:#888; font-size:16px; padding:40px; text-align:center;">
+                        3D visualization not available
+                    </div>
+                {% endif %}
+            </div>
+
+            <p class="info-text">Switch between views using the tabs above • Rotate, zoom, and pan in 3D view</p>
+            <p><a href="{% url 'render_mat' %}" class="back-link">← Upload Another File</a></p>
+        {% elif error %}
+            <div style="color:#ff6b6b; font-size:18px; margin-top:100px; padding:20px; background:#2c2c2c; border-radius:10px;">
+                {{ error }}
+            </div>
+            <p><a href="{% url 'render_mat' %}" class="back-link">← Try Again</a></p>
+        {% else %}
+            <div style="color:#666; font-size:18px; margin-top:100px;">
+                Upload a .mat file to see the floorplan here
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    function switchView(viewName, event) {
+        event.preventDefault();
+        // Hide all views
+        document.querySelectorAll('.view-content').forEach(view => view.classList.remove('active'));
+        // Remove active from all tab buttons
+        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+        // Show selected view
+        document.getElementById('view-' + viewName).classList.add('active');
+        // Add active to clicked button
+        event.target.classList.add('active');
+        
+        // Resize Plotly if switching to 3D view
+        if (viewName === '3d' && window.Plotly) {
+            setTimeout(function() {
+                const plotlyDiv = document.getElementById('plotly-div');
+                if (plotlyDiv) {
+                    window.Plotly.Plots.resize(plotlyDiv);
+                }
+            }, 100);
+        }
+    }
+    
+    // Resize Plotly on window resize
+    window.addEventListener('resize', function() {
+        const plotlyDiv = document.getElementById('plotly-div');
+        if (plotlyDiv && window.Plotly) {
+            window.Plotly.Plots.resize(plotlyDiv);
+        }
+    });
+</script>
+
+</body>
+</html>

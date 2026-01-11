@@ -1,0 +1,661 @@
+function [newBox, constraint] = align_adjacent_room3(box, tempBox, updated, type, threshold)
+% position of box1 relative to box2
+% 0 left-above
+% 1 left-below
+% 2 left-of
+% 3 above
+% 4 inside
+% 5 surrounding
+% 6 below
+% 7 right-of
+% 8 right-above
+% 9 right-below
+
+
+newBox = box;
+constraint = zeros(4, 2);
+idx = 1;
+
+if type == 0
+    alignV(true);
+    alignH(true);
+elseif type == 1
+    alignV(true);
+    alignH(false);
+elseif type == 2
+    align([2,1], [1,3], threshold);
+    align([2,2], [1,2], threshold/2);
+    align([2,4], [1,4], threshold/2);
+elseif type == 3
+    align([2,2], [1,4], threshold);
+    align([2,1], [1,1], threshold/2);
+    align([2,3], [1,3], threshold/2);
+elseif type == 4
+    align([2,1], [1,1], true);
+    align([2,2], [1,2], true);
+    align([2,3], [1,3], true);
+    align([2,4], [1,4], true);
+elseif type == 5
+    align([1,1], [2,1], true);
+    align([1,2], [2,2], true);
+    align([1,3], [2,3], true);
+    align([1,4], [2,4], true);
+elseif type == 6
+    align([2,4], [1,2], threshold);
+    align([2,1], [1,1], threshold/2);
+    align([2,3], [1,3], threshold/2);
+elseif type == 7
+    align([2,3], [1,1], threshold);
+    align([2,2], [1,2], threshold/2);
+    align([2,4], [1,4], threshold/2);
+elseif type == 8
+    alignV(false);
+    alignH(true);
+elseif type == 9
+    alignV(false);
+    alignH(false);
+end
+
+constraint = constraint(1:idx-1, :);
+
+function alignV(isLeft)
+    if isLeft
+        idx1 = 1;
+        idx2 = 3;
+    else
+        idx1 = 3;
+        idx2 = 1;
+    end
+    
+    if abs(tempBox(2,idx1) - tempBox(1,idx2)) <= abs(tempBox(2,idx2) - tempBox(1,idx2))
+        align([2,idx1], [1,idx2], threshold/2)
+    else
+        align([2,idx2], [1,idx2], threshold/2)
+    end
+end
+
+function alignH(isAbove)
+    if isAbove
+        idx1 = 2;
+        idx2 = 4;
+    else
+        idx1 = 4;
+        idx2 = 2;
+    end
+    
+    if abs(tempBox(2,idx1) - tempBox(1,idx2)) <= abs(tempBox(2,idx2) - tempBox(1,idx2))
+        align([2,idx1], [1,idx2], threshold/2)
+    else
+        align([2,idx2], [1,idx2], threshold/2)
+    end
+end
+
+function align(idx1, idx2, threshold, attach)
+    if nargin < 4
+        attach = false;
+    end
+    if abs(tempBox(idx1(1),idx1(2))- tempBox(idx2(1), idx2(2))) <= threshold    
+        if updated(idx1(1), idx1(2)) && ~updated(idx2(1), idx2(2))
+            newBox(idx2(1), idx2(2)) = newBox(idx1(1),idx1(2));
+        elseif updated(idx2(1), idx2(2)) && ~updated(idx1(1), idx1(2))
+            newBox(idx1(1), idx1(2)) = newBox(idx2(1),idx2(2));
+        elseif ~updated(idx1(1), idx1(2)) && ~updated(idx2(1), idx2(2))
+            if attach
+                newBox(idx2(1), idx2(2)) = newBox(idx1(1),idx1(2));
+            else
+                y = (newBox(idx1(1),idx1(2)) + newBox(idx2(1), idx2(2)))/2;
+                newBox(idx1(1),idx1(2)) = y;
+                newBox(idx2(1), idx2(2)) = y;
+            end
+        end
+        
+        if idx1(1) == 1
+            constraint(idx, :) = [idx1(2) idx2(2)];
+        else
+            constraint(idx, :) = [idx2(2) idx1(2)];
+        end
+        idx = idx + 1;
+    end
+end
+
+end
+
+
+
+
+
+function [newBox, order, rBoundary] = align_fp(boundary, rBox, rType, rEdge, fp, threshold, drawResult)
+% align the neighboring rooms first and then align with the boundary
+
+if nargin < 7
+    drawResult =false;
+end
+
+% pre-processing: 
+% move the edge relation w.r.t. living room to the end
+livingIdx = find(rType==0);
+idx = rEdge(:,1) == livingIdx-1 | rEdge(:,2) == livingIdx-1;
+% a = rEdge(~idx, :);
+% b = rEdge(idx, :);
+% rEdge = [a; b];
+rEdge = rEdge(~idx, :);
+entranceBox = get_entrance_space(boundary(1:2, 1:2), boundary(1,3), threshold);
+
+if drawResult
+    clf
+    subplot(2,2,1)
+    plot_fp(rBox, boundary, rType, entranceBox);
+    title('original');
+end
+
+%% option #1: use greedy method: align with boundary first and then neighbor
+% 1. align with boundary after the neighbors have been aligned
+[~, newBox, updated] = align_with_boundary(rBox, boundary, threshold, rType);
+
+if drawResult
+    subplot(2,2,2)
+    plot_fp(newBox, boundary, rType, entranceBox);
+    title('Align with boundary');
+end
+
+
+% 2. for each adjacent pair of room,
+[~, newBox, ~] = align_neighbor(newBox, rEdge, updated, threshold+6);
+if drawResult
+    subplot(2,2,3)
+    plot_fp(newBox, boundary, rType, entranceBox);
+    title('Align with neighbors');
+end
+
+% 3. regularize fp, include crop using boundary, gap filling
+[newBox, order] = regularize_fp(newBox, boundary, rType);
+
+% 4. generate the room polygons
+[newBox, rBoundary] = get_room_boundary(newBox, boundary, order);
+    
+if drawResult
+    subplot(2,2,4)
+    plot_fp(newBox(order,:), boundary, rType(order), entranceBox);
+    title('Regularize fp');
+end
+
+% %% option #2: use optimization to align neighbors, and then align the boundary 
+% % 1. get the constraint from the adjacent rooms， and optimize
+% %[constraint1, ~, ~] = align_with_boundary(rBox, boundary, threshold, rNode);
+% [constraint2, ~, ~] = align_neighbor(rBox, rEdge, [], threshold+2);
+% newBox = optimize_fp(rBox, [], constraint2);
+% if drawResult
+%     subplot(3,4,6)
+%     plot_fp(newBox, boundary, rNode, entranceBox);
+%     title('Optimize the neighboring');
+% end
+% 
+% % 2. align with boundary after the neighbors have been aligned
+% [constraint1, newBox2, ~] = align_with_boundary(newBox, boundary, threshold, rNode);
+% if drawResult
+%     subplot(3,4,7)
+%     plot_fp(newBox2, boundary, rNode, entranceBox);
+%     title('Align with boundary w/o optimization');
+% end
+% 
+% % 3. regularize fp, include crop using boundary, gap filling
+% [newBox2, order] = regularize_fp(newBox2, boundary, rNode);
+% if drawResult
+%     subplot(3,4,8)
+%     plot_fp(newBox2(order,:), boundary, rNode(order,:), entranceBox);
+%     title('Regularize fp');
+% end
+% 
+% 
+% 
+% newBox = optimize_fp(newBox, constraint1, constraint2);
+% if drawResult
+%     subplot(3,4,11)
+%     plot_fp(newBox, boundary, rNode, entranceBox);
+%     title('Align with boundary with optimization');
+% end
+% 
+% % 3. regularize fp, include crop using boundary, gap filling
+% [newBox, order] = regularize_fp(newBox, boundary, rNode);
+% if drawResult
+%     subplot(3,4,12)
+%     plot_fp(newBox(order,:), boundary, rNode(order,:), entranceBox);
+%     title('Regularize fp');
+%     if ~isempty(figName)
+%         saveas(gcf, figName);
+%     end
+% end
+% 
+
+
+
+%%
+end
+
+
+
+
+
+function [constraint, box, updated] = align_neighbor(box, rEdge, updated, threshold)
+
+if isempty(updated)
+    updated = false(size(box));
+end
+
+tempBox = box;
+constraint = zeros(size(rEdge, 1)*3, 2); 
+iBegin = 1;
+checked = false(size(rEdge, 1), 1);
+updatedCount = get_updated_count(updated, rEdge);
+for i = 1:size(rEdge, 1)
+    I = find(~checked);
+    [~, t] = maxk(updatedCount(I), 1);
+    checked(I(t)) = true;
+    idx = rEdge(I(t),1:2)+1;
+    [b, c] = align_adjacent_room3(box(idx, :), tempBox(idx, :), updated(idx,:), rEdge(I(t),3), threshold);
+    for j = 1:length(idx)
+        
+        updated(idx(j), c(:,j)) = true;
+        
+        c(:, j) = (c(:,j)-1)*size(box,1) + double(idx(j)); 
+        
+        if b(j, 1) == b(j, 3)
+            b(j, [1 3]) = box(idx(j), [1 3]);
+            updated(idx(j), c(:,j)) = false;
+        end
+        if b(j, 2) == b(j, 4)
+            b(j, [2 4]) = box(idx(j), [2 4]);
+            updated(idx(j), c(:,j)) = false;
+        end
+        
+    end
+    box(idx, :) = b;
+    
+    
+    cNum = size(c, 1);
+    
+    constraint(iBegin:iBegin+cNum-1, :) = c;
+    iBegin = iBegin+cNum;
+    
+    updatedCount = get_updated_count(updated, rEdge);
+end
+constraint = constraint(1:iBegin-1, :);
+
+function updatedCount = get_updated_count(updated, rEdge)
+    updatedCount = zeros(size(rEdge, 1), 1);
+    for k = 1:size(rEdge, 1)
+        index = rEdge(k,1:2)+1;
+        updatedCount(k) = sum(sum(updated(index,:)));
+    end
+end
+end
+
+
+
+
+function [constraint, box, updated] = align_with_boundary(box, boundary, threshold, rType)
+tempBox = box;
+updated = false(size(box));
+closedSeg = zeros(size(box));
+distSeg = zeros(size(box));
+for i = 1:length(box)
+    [closedSeg(i,:), distSeg(i,:)] = find_close_seg(box(i,:), boundary); 
+end
+
+
+box(distSeg <= threshold) = closedSeg(distSeg <= threshold);
+updated(distSeg <= threshold) = true;
+idx = find(distSeg <= threshold);
+constraint = [idx closedSeg(idx)];
+
+
+% check if any room box blocks the door
+entranceBox = get_entrance_space(boundary(1:2, 1:2), boundary(1,3), threshold);
+entrancePoly = polyshape(entranceBox([1 1 3 3]), entranceBox([2 4 4 2]));
+for i = 1:length(box)
+    if rType(i) ~= 10 && rType(i) ~= 0
+        roomPoly = polyshape(box(i, [1 1 3 3]), box(i, [2 4 4 2]));
+        if overlaps(entrancePoly, roomPoly)
+            box(i,:) = shrink_box(roomPoly, entrancePoly, boundary(1,3));
+            updated(i, box(i,:)==tempBox(i,:)) = false;
+            updated(i, box(i,:)~=tempBox(i,:)) = true;
+        end
+    end        
+end
+
+
+
+
+
+function [closedSeg, distSeg, idx] = find_close_seg(box, boundary)
+
+% need to carefully select the closed wall seg for each box
+% cannot introduce a hole inside the boundary
+
+isNew = boundary(:,4);
+boundary = double(boundary(~isNew, :));
+
+% get the ordered horizontal and vertical segments on the boundary
+bSeg = [boundary(:, 1:2), boundary([2:end 1], 1:2), boundary(:,3)];
+vSeg = bSeg(mod(boundary(:,3), 2)==1, :);
+vSeg(vSeg(:,5)==3, [2 4]) = vSeg(vSeg(:,5)==3, [4 2]);
+[~, I] = sort(vSeg(:,1));
+vSeg = vSeg(I,:);
+
+hSeg = bSeg(mod(boundary(:,3), 2)==0, :);
+hSeg(hSeg(:,5)==2, [1 3]) = hSeg(hSeg(:,5)==2, [3 1]);
+[~, I] = sort(hSeg(:,2));
+hSeg = hSeg(I,:);
+
+closedSeg = ones(1,4)*256;
+distSeg = ones(1,4)*256;
+idx = zeros(1, 4);
+
+% check vertial seg
+for i = 1:size(vSeg,1)
+    seg = vSeg(i, :);
+    vdist = 0;
+    if seg(4) <= box(2) 
+        vdist = box(2) - seg(4);
+    elseif seg(2) >= box(4) 
+        vdist = seg(2) - box(4);
+    end
+    
+    hdist = box([1 3]) - seg(1);
+    dist1 = norm(double([hdist(1), vdist])); 
+    dist3 = norm(double([hdist(2), vdist])); 
+    
+    if dist1 < distSeg(1) && dist1 <= dist3 &&  hdist(1) > 0 
+        distSeg(1) = dist1;
+        idx(1) = i;
+        closedSeg(1) = seg(1);
+    elseif dist3 < distSeg(3) && hdist(2) < 0 
+        distSeg(3) = dist3;
+        idx(3) = i;
+        closedSeg(3) = seg(3);
+    end
+end
+
+% check horizontal seg
+for i = 1:size(hSeg,1)
+    
+    seg = hSeg(i, :);
+    hdist = 0;
+    if seg(3) <= box(1) 
+        hdist = box(1) - seg(3);
+    elseif seg(1) >= box(3) 
+        hdist = seg(1) - box(3);
+    end
+    
+    vdist = box([2 4]) - seg(2);
+    dist2 = norm(double([vdist(1), hdist]));
+    dist4 = norm(double([vdist(2), hdist]));
+    
+    if dist2 <= dist4 && dist2 < distSeg(2) &&  vdist(1) > 0 
+        distSeg(2) = dist2;
+        idx(2) = i;
+        closedSeg(2) = seg(2);
+    elseif dist4 < distSeg(4) && vdist(2) < 0 
+        distSeg(4) = dist4;
+        idx(4) = i;
+        closedSeg(4) = seg(4);
+    end
+end
+
+
+
+
+
+function order = find_room_order(M)
+
+n = size(M,1);
+G = digraph(M);
+name = cell(n,1);
+for i = 1:n
+    name{i} = num2str(i);
+end
+G.Nodes.Name = name;
+
+order = zeros(n, 1);
+i = 1;
+while i <= n
+    D = indegree(G);
+    c = find(D==0);
+    if isempty(c)
+        idx = find(D==1);
+        c = setdiff(idx, order);
+        order(i) = str2double(G.Nodes.Name{c(1)});
+        G = rmnode(G, c(1));
+        i = i+1;
+    else
+        for j = 1:length(c)
+            order(i+j-1) = str2double(G.Nodes.Name{c(j)});
+        end
+        G = rmnode(G, c);
+        i = i + length(c);
+    end
+end
+
+
+
+
+
+function doorBox = get_entrance_space(doorSeg, doorOri, threshold)
+
+doorBox = [doorSeg(1,:) doorSeg(2,:)];
+if doorOri == 0
+    doorBox(4) = doorBox(4) + threshold;
+elseif doorOri == 1
+    doorBox(1) = doorBox(1) - threshold;
+elseif doorOri == 2
+    doorBox(2) = doorBox(2) - threshold;
+elseif doorOri == 3
+    doorBox(3) = doorBox(3) + threshold;
+end
+    
+
+
+
+function [newBox, rBoundary] = get_room_boundary(box, boundary, order)
+
+isNew = boundary(:,4);
+polyBoundary = polyshape(boundary(~isNew,1),  boundary(~isNew,2));
+
+poly = cell(size(box,1), 1);
+for i = 1:size(box,1)
+    poly{i} = polyshape(box(i, [1 1 3 3]), box(i, [2 4 4 2]));
+end
+
+newBox = box;
+rBoundary = cell(size(box,1), 1);
+for i = 1:size(box,1)
+    idx = order(i);
+    
+    rPoly = intersect(polyBoundary, poly{idx}); 
+    for j = i+1:size(box,1)
+        rPoly = subtract(rPoly, poly{order(j)});
+    end
+    rBoundary{idx} = rPoly.Vertices;
+    [xLimit, yLimit]= boundingbox(rPoly);
+    if ~isempty(xLimit)
+        newBox(idx,:) = [xLimit(1) yLimit(1) xLimit(2), yLimit(2)];
+    end
+end
+
+
+
+
+function [box, order] = regularize_fp(box, boundary, rType)
+
+% 1. use the boundary to crop each room box
+isNew = boundary(:,4);
+polyBoundary = polyshape(boundary(~isNew,1),  boundary(~isNew,2));
+for i = 1:size(box, 1)
+    polyRoom = polyshape(box(i, [1 1 3 3]), box(i, [2 4 4 2]));
+    [xLimit, yLimit] = boundingbox(intersect(polyBoundary,polyRoom));
+    if isempty(xLimit)
+        disp('One room outside the building!'); 
+    else
+        box(i,:) = [xLimit(1) yLimit(1) xLimit(2), yLimit(2)];
+    end
+end
+
+
+% 2. check if there is any overlapped region to determine the layer of boxes
+orderM = false(size(box,1), size(box,1));
+for i = 1:size(box,1)
+    polyRoom1 = polyshape(box(i, [1 1 3 3]), box(i, [2 4 4 2]));
+    area1 = area(polyRoom1);
+    for j = i+1:size(box,1)
+         polyRoom2 = polyshape(box(j, [1 1 3 3]), box(j, [2 4 4 2]));
+         area2 = area(polyRoom2);
+         inter = intersect(polyRoom1, polyRoom2);
+         if inter.NumRegions >= 1
+             if area1 <= area2 % may need to add the FP into consideration
+                 orderM(i,j) = true;
+             else
+                 orderM(j,i) = true;
+             end
+         end
+    end
+end
+order = 1:size(box,1);
+if any(orderM(:))
+    order = find_room_order(orderM);
+end
+order = order(end:-1:1);
+
+% 3. check if there are more than one uncovered regions inside the building
+livingIdx = find(rType==0);
+for i = 1:size(box, 1)
+    if i ~= livingIdx
+       if box(i,1)==box(i,3) || box(i,2)==box(i,4)
+           disp('Empty box!!!');
+       else
+           polyRoom = polyshape(box(i, [1 1 3 3]), box(i, [2 4 4 2]));
+           polyBoundary = subtract(polyBoundary,polyRoom);
+       end
+       
+    end
+end
+livingPoly = polyshape(box(livingIdx, [1 1 3 3]), box(livingIdx, [2 4 4 2]));
+
+gap = polyBoundary;
+if gap.NumRegions == 1
+    [xLimit, yLimit] = boundingbox(gap);
+    box(livingIdx,:) = [xLimit(1) yLimit(1) xLimit(2), yLimit(2)];
+else
+    rIdx = find(isnan(gap.Vertices(:,1)));
+    rIdx = [rIdx; size(gap.Vertices,1)+1];
+    
+    % for each region, check if it intersects with the living room, 
+    % otherwise get the room label and find the room that should cover 
+    % the region
+    
+    region = cell(length(rIdx), 1);
+    overlapArea = zeros(length(rIdx), 1);
+    closeRoomIdx = zeros(length(rIdx), 1);
+    idx = 1;
+    for k = 1:length(rIdx)
+        regionV = gap.Vertices(idx:rIdx(k)-1, :);
+        idx = rIdx(k) + 1;
+        region{k} = polyshape(regionV);
+        
+        if overlaps(region{k}, livingPoly)
+            iter = intersect(region{k}, livingPoly);
+            overlapArea(k) = area(iter);
+        end
+        
+        [x, y] = centroid(region{k});
+        center = [x, y];
+        
+        dist = 256;
+        bIdx = 0;
+        for i = 1:size(box, 1)
+            b = box(i, :);
+            bCenter = double([(b(:,1)+b(:,3))/2, (b(:,2)+b(:,4))/2]);
+            d = norm(bCenter-center);
+            if d<dist
+                dist = d;
+                bIdx = i;
+            end
+        end
+        closeRoomIdx(k) = bIdx;
+    end 
+    
+    [~, lIdx] = max(overlapArea);
+    for k = 1:length(closeRoomIdx)
+        if k == lIdx
+            [xLimit, yLimit] = boundingbox(region{k});
+            box(livingIdx,:) = [xLimit(1) yLimit(1) xLimit(2), yLimit(2)];
+        else
+            room = polyshape(box(closeRoomIdx(k), [1 1 3 3]), box(closeRoomIdx(k), [2 4 4 2]));
+            [xLimit, yLimit] = boundingbox(union(room, region{k}));
+            box(closeRoomIdx(k),:) = [xLimit(1) yLimit(1) xLimit(2), yLimit(2)];
+        end
+    end        
+end
+    
+
+
+function box = shrink_box(roomPoly, entrancePoly, doorOrient)
+
+[PG, shapeId, ~] = subtract(roomPoly, entrancePoly);
+idx1 = find(shapeId==1);
+d = idx1(2:end) - idx1(1:end-1);
+i = find(d~=1);
+if ~isempty(i)
+    idx1 = idx1([i+1:end 1:i]);
+end
+
+idx2 = find(shapeId~=1);
+d = idx2(2:end) - idx2(1:end-1);
+i = find(d~=1);
+if ~isempty(i)
+    idx2 = idx2([i+1:end 1:i]);
+end
+
+remainPoint = length(idx1);
+if remainPoint == 2
+    box = [min(PG.Vertices) max(PG.Vertices)];
+elseif remainPoint == 3
+    assert(length(idx2) == 3);
+    pointSet1 = PG.Vertices([idx1(1:2); idx2(2)], :);
+    pointSet2 = PG.Vertices([idx1(2:3); idx2(2)], :);
+    if mod(doorOrient, 2) == 0 % door grow vertically
+        if pointSet1(1,1) ==  pointSet1(2,1)
+            box = [min(pointSet1) max(pointSet1)];
+        else
+            box = [min(pointSet2) max(pointSet2)];
+        end
+    else
+        if pointSet1(1,2) ==  pointSet1(2,2)
+            box = [min(pointSet1) max(pointSet1)];
+        else
+            box = [min(pointSet2) max(pointSet2)];
+        end
+    end
+elseif remainPoint == 4 
+    % elseif remainPoint == 4 && length(idx2) == 4
+%     pointSet = PG.Vertices([idx1(2:3); idx2(2:3)], :);
+%     box = [min(pointSet) max(pointSet)];
+% elseif remainPoint == 4 % door inside the box
+    [x1, y1] = centroid(roomPoly);
+    [x2, y2] = centroid(entrancePoly);
+    box = [min(roomPoly.Vertices)  max(roomPoly.Vertices)];
+    if mod(doorOrient, 2) == 0 % door grow vertically
+        if x1 < x2
+            box(3) = min(entrancePoly.Vertices(:,1));
+        else
+            box(1) = max(entrancePoly.Vertices(:,1));
+        end
+    else
+        if y1 < y2
+            box(4) = min(entrancePoly.Vertices(:,2));
+        else
+            box(2) = max(entrancePoly.Vertices(:,2));
+        end
+    end
+else
+    disp(['There are other cases with point number = ', num2str(length(shapeId))]);
+end
